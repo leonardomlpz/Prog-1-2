@@ -44,7 +44,7 @@ int main ()
 
         if (!valido_r(div))
         {
-            printf("DIVISAO INVALIDA\n");
+            printf(" DIVISAO INVALIDA\n");
             return 1;
         }
         imprime_r(soma);

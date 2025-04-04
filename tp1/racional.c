@@ -147,7 +147,7 @@ struct racional subtrai_r (struct racional r1, struct racional r2)
 struct racional multiplica_r (struct racional r1, struct racional r2)
 {
 	struct racional r;
-	r.num = r1.num*r2.den;
+	r.num = r1.num*r2.num;
 	r.den = r1.den*r2.den;
 
 	return r;
@@ -156,8 +156,8 @@ struct racional multiplica_r (struct racional r1, struct racional r2)
 struct racional divide_r (struct racional r1, struct racional r2)
 {
 	struct racional r;
-	r.num = r1.num*r2.num;
-	r.den = r1.den*r2.den;
+	r.num = r1.num*r2.den;
+	r.den = r1.den*r2.num;
 
 	return r;
 }

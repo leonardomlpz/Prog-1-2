@@ -48,14 +48,17 @@ struct racional cria_r (long numerador, long denominador)
 /* calcula o MDC pelo método de Euclides */
 long mdc (long a, long b)
 {
-	while((a != 0) && (b != 0)){
-		if(a > b)
-			a = a % b;
-		else b = b % a;
+	long c,d;
+	c = labs(a);
+	d = labs(b);
+	while((c != 0) && (d != 0)){
+		if(c > d)
+			c = c % d;
+		else d = d % c;
 		}
-		if (a == 0)
-			return b;
-		else return a;
+		if (c == 0)
+			return d;
+		else return c;
 }
 
 /* Recebe um número racional e o simplifica.
@@ -65,7 +68,7 @@ long mdc (long a, long b)
  * Se r for inválido, devolve-o sem simplificar. */
 struct racional simplifica_r (struct racional r)
 {
-	long maior_mult = mdc(labs(r.num), labs(r.den));
+	long maior_mult = mdc(r.num, r.den);
 	r.num = r.num / maior_mult;
 	r.den = r.den / maior_mult;
 
@@ -90,7 +93,7 @@ long mmc (long a, long b)
 {
   long resultado;
 
-	resultado = mdc(labs(a), labs(b));
+	resultado = mdc(a, b);
 	if (resultado < 0)
 		return -1;
 

@@ -29,30 +29,32 @@ long aleat (long min, long max)
 /* calcula o MDC pelo método de Euclides */
 long mdc (long a, long b)
 {
-    long tmp_a,tmp_b;
-	tmp_a = labs(a);
-	tmp_b = labs(b);
-	while((tmp_a != 0) && (tmp_b != 0)){
-		if(tmp_a > tmp_b)
-			tmp_a = tmp_a % tmp_b;
-		else tmp_b = tmp_b % tmp_a;
-		}
-		if (tmp_a == 0)
-			return tmp_b;
-		else return tmp_a;
+	long temp_a, temp_b;
+	temp_a = a;
+	temp_b = b;
+    while((temp_a != 0) && (temp_b != 0)){
+        if(temp_a > temp_b)
+            temp_a = temp_a % temp_b;
+        else 
+            temp_b = temp_b % temp_a;
+    }
+    if (temp_a == 0)
+        return temp_b;
+    else 
+        return temp_a;
 }
 
 /* Mínimo Múltiplo Comum entre a e b */
 /* mmc = (a * b) / mdc (a, b)        */
 long mmc (long a, long b)
 {
-    long resultado;
+    long resultado_mdc;
 
-    resultado = mdc(a, b);
-	if (resultado < 0)
-		return -1;
-
-	return ((a * b) / resultado);
+    resultado_mdc = mdc(a, b);
+    if (resultado_mdc < 0)
+        return -1;
+    else
+        return ((a * b) / resultado_mdc);
 }
 
 /* Recebe um número racional e o simplifica.
@@ -64,70 +66,98 @@ struct racional simplifica_r (struct racional r)
 {
     if (r.den == 0)
         return r;
-
-    long maior_mult = mdc(r.num, r.den);
-    r.num = r.num / maior_mult;
-    r.den = r.den / maior_mult;
+    long maior_multiplo = mdc(labs(r.num), labs(r.den));
+    r.num = r.num / maior_multiplo;
+    r.den = r.den / maior_multiplo;
     return r;
 }
 
+/* implemente as demais funções de racional.h aqui */
+
+
 int valido_r (struct racional r)
 {
-	//retorna 1 se for valido
-	if (r.den != 0)
-		return 1;
+    if (r.den != 0) /*colocar expressao usando struct*/
+        return 1;
+    else 
+        return 0;  /*retorna 0 se for invalido*/
+}
+
+int compara_r (struct racional r1, struct racional r2)
+{
+    if ((valido_r(r1) == 0) || (valido_r(r2) == 0))
+        return -2;
+
+    if ((r1.num == r2.num)&&(r1.den == r2.den))
+        return 0;
+
+    int min_mult_comum;
+
+    min_mult_comum = mmc(labs(r1.den),labs(r2.den));
+
+    r1.num = r1.num * (min_mult_comum/r1.den);
+    r2.num = r2.num * (min_mult_comum/r2.den);
+
+    if ((r1.num)<(r2.num)){
+        return -1;
+	}
+    if ((r1.num)>(r2.num)){
+        return 1;
+	}
 
 	return 0;
 }
 
-struct racional cria_r (long numerador, long denominador)
-{
-	struct racional r;
-	r.num = numerador;
-	r.den = denominador;
-	
-	return r;
-}
-
+/*multiplica o num pelo mmc do den*/
 struct racional sorteia_r (long min, long max)
 {
-	struct racional r;
-	long num = aleat(min, max);
-	long den = aleat(min, max);
+    struct racional r;
+    long numerador, denominador;
 
-	r = cria_r(num, den);
-	simplifica_r(r);
-
-	return r;
+    numerador = aleat(min, max);
+    denominador = aleat(min, max); 
+    r = cria_r (numerador, denominador);
+    r = simplifica_r(r);
+    /*return o numero simplificado funcao*/
+    return r;
 }
 
 void imprime_r (struct racional r)
 {
-	r = simplifica_r(r);
+    r = simplifica_r (r);
 
-	if (r.den == 0){
-		printf (" NaN");
-		return;
-	}
-	if (r.num == 0){
-		printf (" 0");
-		return;
-	}
-	if (r.num == r.den){
-		printf (" 1");
-		return;
-	}
-	//inverte se o den for negativo
-	if (r.den < 0){
-		r.num = r.num * -1;
-		r.den = r.den * -1;
-	}
-	if (r.den == 1){
-		printf (" %ld", r.num);
-		return;
-	}
-	printf (" %ld/%ld", r.num, r.den);
-	return;
+    if (r.den == 0){
+        printf ("NaN");
+        return;
+    }
+    if (r.num == 0){
+        printf ("0");
+        return;
+    }
+    if (r.num == r.den){
+        printf ("1");
+        return;
+    }
+    /* apenas inverte*/
+    if (r.den < 0)
+    { 
+        r.den = r.den * -1;
+        r.num = r.num * -1;
+    }
+    if (r.den == 1){
+        printf ("%ld", r.num);
+        return;
+    }
+    printf ("%ld/%ld", r.num, r.den);
+    return;
+}
+
+struct racional cria_r (long numerador, long denominador)
+{
+    struct racional r;
+    r.num = numerador;
+    r.den = denominador;
+    return r;
 }
 
 int soma_r (struct racional r1, struct racional r2, struct racional *r3)
@@ -137,7 +167,8 @@ int soma_r (struct racional r1, struct racional r2, struct racional *r3)
     *r3 = simplifica_r(*r3);
     if (valido_r(r1)==0 || (valido_r(r2)==0) || r3 == NULL)
         return 0;
-    else return 1;
+    else 
+        return 1;
 }
 
 int subtrai_r (struct racional r1, struct racional r2, struct racional *r3)
@@ -146,7 +177,8 @@ int subtrai_r (struct racional r1, struct racional r2, struct racional *r3)
     r3 -> den = r1.den*r2.den;
     if (valido_r(r1)==0 || (valido_r(r2)==0) || r3 == NULL)
         return 0;
-    else return 1;
+    else 
+        return 1;
 }
 
 int multiplica_r (struct racional r1, struct racional r2, struct racional *r3)
@@ -155,7 +187,8 @@ int multiplica_r (struct racional r1, struct racional r2, struct racional *r3)
     r3 -> den = r1.den*r2.den;
     if (valido_r(r1)==0 || (valido_r(r2)==0) || r3 == NULL)
         return 0;
-    else return 1;
+    else 
+        return 1;
 }
 
 int divide_r (struct racional r1, struct racional r2, struct racional *r3)
@@ -164,27 +197,6 @@ int divide_r (struct racional r1, struct racional r2, struct racional *r3)
     r3 -> den = r1.den*r2.num;
     if (valido_r(r1)==0 || (valido_r(r2)==0) || r3 == NULL)
         return 0;
-    else return 1;
-}
-
-int compara_r (struct racional r1, struct racional r2)
-{
-    if (valido_r(r1) || valido_r(r2))
-        return -2;
-
-    if ((r1.num == r2.num) && (r1.den == r2.den))
-        return 0;
-
-    int min_mult;
-    min_mult = mmc(r1.den, r2.den);
-
-    r1.num = r1.num * (min_mult/r1.den);
-    r2.num = r2.num * (min_mult/r2.den);
-
-    if ((r1.num) < (r2.num))
-        return -1;
-    if ((r1.num) > (r2.num))
+    else 
         return 1;
-
-    return 0;
 }

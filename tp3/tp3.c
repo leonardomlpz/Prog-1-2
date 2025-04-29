@@ -83,7 +83,7 @@ void elimina_nulo(struct racional *vetor[], int *tam)
 {
     int i, j;
     int qtde_nulos = 0;
-    
+    //coloca os elementos nulos no fim do vetor
     for (i = 0; i < *tam; i++)
     {
         if (valido_r(vetor[i]) == 0)
@@ -98,7 +98,7 @@ void elimina_nulo(struct racional *vetor[], int *tam)
             }
         }
     }
-    
+    //elimina os nulos e conta a quantidade para decrementar o tamanho do vetor
     for (i = 0; i < *tam; i++)
     {
         if (!valido_r(vetor[i]))
@@ -113,7 +113,7 @@ void elimina_nulo(struct racional *vetor[], int *tam)
 }
 
 
-void soma_vet(struct racional *vetor[], long tam)
+struct racional *soma_vet(struct racional *vetor[], long tam)
 {
     struct racional *soma = malloc(sizeof(struct racional));
     struct racional temp;
@@ -128,10 +128,7 @@ void soma_vet(struct racional *vetor[], long tam)
         soma->den = temp.den;
     }
 
-    imprime_r(soma);
-
-    free (soma);
-    soma = NULL;
+    return soma;
 }
 
 void libera_vet(struct racional *vetor[], int tam)
@@ -152,6 +149,7 @@ int main ()
     scanf ("%d", &n);
 
     struct racional **vetor;
+    struct racional *soma;
 
     if (!(vetor  = malloc(n * sizeof(struct racional*))))
         return 0;
@@ -172,8 +170,13 @@ int main ()
     printf ("\n");
 
     printf ("SOMA = ");
+    //testa se apos eliminar nulos ainda tem elementos no vetor
     if (n > 0)
-        soma_vet(vetor,n);
+    {
+        soma = soma_vet(vetor,n);
+        imprime_r(soma);
+        destroi_r(soma);
+    }
     else
         printf ("0");
     printf ("\n"); 

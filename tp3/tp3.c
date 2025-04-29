@@ -25,7 +25,10 @@ void le_vet(struct racional *vetor[], long tam)
 
 void imprime_vet(struct racional *vetor[], long tam)
 {
-    for (int i = 0; i < tam; i++)
+    if (tam > 0)
+        imprime_r(vetor[0]);
+
+    for (int i = 1; i < tam; i++)
     {
         printf (" ");
         imprime_r(vetor[i]);
@@ -76,23 +79,37 @@ void troca_elemento(struct racional **a, struct racional **b)
 
 /*ordena trocando o primero nulo do comeco para o fim, pelo primeiro nao nulo
 testando do fim para o comeco*/
-void elimina_nulo(struct racional *vetor[], long tam, long *qtde_nulos)
+void elimina_nulo(struct racional *vetor[], int *tam)
 {
     int i, j;
-
-    for (i = 0; i < tam; i++) {
-        if (valido_r(vetor[i]) == 0) {  // Verifica se é inválido
-            *qtde_nulos = *qtde_nulos + 1;
-
-            // Procura o primeiro válido a partir do final
-            for (j = tam - 1; j > i; j--) {
-                if (valido_r(vetor[j]) != 0) {
+    int qtde_nulos = 0;
+    
+    for (i = 0; i < *tam; i++)
+    {
+        if (valido_r(vetor[i]) == 0)
+        {
+            for (j = *tam - 1; j > i; j--)
+            {
+                if (valido_r(vetor[j]) != 0)
+                {
                     troca_elemento(&vetor[i], &vetor[j]);
                     break;
                 }
             }
         }
     }
+    
+    for (i = 0; i < *tam; i++)
+    {
+        if (!valido_r(vetor[i]))
+        {
+            qtde_nulos++;
+            destroi_r(vetor[i]);
+            vetor[i] = NULL;
+        }
+    }
+    
+    *tam -= qtde_nulos;
 }
 
 
@@ -131,7 +148,6 @@ void libera_vet(struct racional *vetor[], int tam)
 int main ()
 {
     int n;
-    long nulos;
 
     scanf ("%d", &n);
 
@@ -141,36 +157,30 @@ int main ()
         return 0;
 
     le_vet(vetor,n);
-    printf ("VETOR =");
+    printf ("VETOR = ");
     imprime_vet(vetor,n);
     printf ("\n");
 
-    /*quantidade de numeros nulos no vetor*/
-    nulos = 0;
-
-    elimina_nulo(vetor,n,&nulos);
-    printf ("VETOR =");
-    imprime_vet(vetor,(n-nulos));
+    elimina_nulo(vetor,&n);
+    printf ("VETOR = ");
+    imprime_vet(vetor,n);
     printf ("\n");
 
-    quick_sort(vetor,(n-nulos));
-    printf ("VETOR =");
-    imprime_vet(vetor,(n-nulos));
+    quick_sort(vetor,n);
+    printf ("VETOR = ");
+    imprime_vet(vetor,n);
     printf ("\n");
 
-    printf ("SOMA =");
-    if (nulos != n)
-    {
-        printf (" ");
-        soma_vet(vetor,(n-nulos));
-    }
+    printf ("SOMA = ");
+    if (n > 0)
+        soma_vet(vetor,n);
     else
-        printf (" 0");
+        printf ("0");
     printf ("\n"); 
 
-    printf ("VETOR =");
-    libera_vet (vetor, (n));  
-    imprime_vet(vetor,(n-nulos));
+    printf ("VETOR = ");
+    libera_vet (vetor,n);  
+    imprime_vet(vetor,n);
 
     printf ("\n");
 

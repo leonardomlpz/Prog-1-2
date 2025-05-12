@@ -7,11 +7,15 @@
 
 struct item_t
 {
-  // define a estrutura interna do item
+    int valor;
+    struct item_t *ant;
+    struct item_t *prox;
 } ;
 
 // estrutura de uma lista
 struct lista_t
 {
-  // define a estrutura interna da lista
+    struct item_t *prim;
+    struct item_t *ult;
+    int tamanho;
 } ;

@@ -12,7 +12,7 @@ struct fila_nodo_t
 struct fila_t
 {
   struct fila_nodo_t *prim ;	// primeiro nodo da fila
-	struct fila_noto_t *fim;		// último nodo da fila
+	struct fila_nodo_t *fim;		// último nodo da fila
   int num ;			// número de itens na fila
 } ;
 

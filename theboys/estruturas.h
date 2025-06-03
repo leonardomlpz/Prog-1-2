@@ -10,6 +10,7 @@ typedef struct heroi
     int velocidade;
     int exp;
     int base;
+    int vivo;
 } heroi_t;
 
 typedef struct base

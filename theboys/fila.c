@@ -49,7 +49,7 @@ int fila_insere (struct fila_t *f, void *item)
     if (f == NULL || item == NULL)
         return -1;
     struct fila_nodo_t *novo;
-    if (! (malloc(sizeof(struct fila_nodo_t))) )
+    if (! (novo = malloc(sizeof(struct fila_nodo_t))) )
         return -1;
 
     novo->item = item;

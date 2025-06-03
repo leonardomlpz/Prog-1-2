@@ -5,7 +5,7 @@
 
 int aleat (int min, int max);
 
-evento_t *itens(base_t *base, heroi_t *heroi, missao_t *missao);
+evento_t *itens(base_t *base, heroi_t *heroi, missao_t *missao, int tempo);
 
 void chega(int tempo, heroi_t *heroi, base_t *base,struct fprio_t *lef);
 

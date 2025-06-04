@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include "estruturas.h"
 
 #include "fila.h"
 
@@ -113,12 +114,18 @@ int fila_tamanho (struct fila_t *f)
     return f->num;
 }
 
-//void fila_imprime (struct fila_t *f)
-//{
-//    if (f == NULL || f->prim == NULL)
-//        return;
-//
-//    struct fila_nodo_t *aux;
-//    aux = f->prim;
-//    printf ("(%d)", aux->)
-//}
+void fila_imprime (struct fila_t *f)
+{
+    if (f == NULL || f->prim == NULL)
+        return;
+
+    struct fila_nodo_t *aux;
+    aux = f->prim;
+    printf ("(%d)", ((heroi_t *)aux->item)->heroi_id);
+
+    for (int i = 2; i <= f->num; i++)
+    {
+        aux = aux->prox;
+        printf (" (%d)", ((heroi_t *)aux->item)->heroi_id);
+    }
+}

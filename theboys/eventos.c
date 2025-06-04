@@ -20,3 +20,86 @@ evento_t *itens(base_t *base, heroi_t *heroi, missao_t *missao, int tempo)
 
     return elementos;
 }
+
+void chega(int tempo, heroi_t *heroi, base_t *base,struct fprio_t *lef)
+{
+    evento_t *temp;
+    temp = itens(base,heroi,NULL,tempo);
+
+    int esperar;
+
+    heroi->base = base->base_id;
+
+    if (base->espera->num == 0 && base->lotacao_max > base->base_presentes->num)
+        esperar = 0;
+    else
+        esperar = (heroi->paciencia) > (10 * base->espera->num);
+
+    if (esperar == 0)
+    {
+        fprio_insere(lef,temp,ev_espera,temp->tempo);
+
+        printf("%6d: CHEGA HEROI %2d BASE %d (%2d/%2d) ESPERA\n", tempo, heroi->heroi_id, base->base_id, base->base_presentes->num, base->base_presentes->cap);
+    }
+    else
+    {
+        fprio_insere(lef,temp,ev_desiste,temp->tempo);
+
+        printf("%6d: CHEGA HEROI %2d BASE %d (%2d/%2d) DESISTE\n", tempo, heroi->heroi_id, base->base_id, base->base_presentes->num, base->base_presentes->cap);
+    }
+    return;
+}
+
+void espera(int tempo, heroi_t *heroi, base_t *base, struct fprio_t *lef)
+{
+    printf("%6d: ESPERA HEROI %2d BASE %d (%2d)\n", tempo, heroi->heroi_id, base->base_id, base->espera->num);
+    
+    base->espera->num = fila_insere(base->espera,heroi);
+
+    evento_t *temp;
+    temp = itens(base,heroi,NULL,tempo);
+    fprio_insere(lef,temp,ev_avisa,temp->tempo);
+
+    return;
+}
+
+void desiste(int tempo, heroi_t *heroi, base_t *base, mundo_t *mundo, struct fprio_t *lef)
+{
+    printf("%6d: DESISTE HEROI %2d BASE %d\n", tempo, heroi->heroi_id, base->base_id);
+
+    base_t *destino;
+    destino = &mundo->bases[aleat(0,mundo->num_bases - 1)];
+
+    evento_t *temp;
+    temp = itens(destino,heroi,NULL,tempo);
+    fprio_insere(lef,temp,ev_viaja,temp->tempo);
+
+    return;
+}
+
+void avisa(int tempo, heroi_t *heroi, base_t *base, struct fprio_t *lef)
+{
+    if (!heroi->vivo)
+        return;
+    
+    evento_t *temp;
+
+    printf ("%6d: AVISA  PORTEIRO BASE %d (%2d/%2d) FILA [ ", tempo, base->base_id, base->base_presentes->num, base->lotacao_max);
+    fila_imprime(base->espera);
+    printf("]\n");
+
+    while (base->lotacao_max > base->base_presentes->num && base->espera->num > 0)
+    {
+        fila_retira(base->espera);
+        if ((cjto_insere(base->espera,heroi->heroi_id)) == -1)
+            return;
+        base->base_presentes->num++;
+        base->espera->num--;
+
+        temp = itens(base,heroi,NULL,tempo);
+        fprio_insere(lef,temp,ev_entra,temp->tempo);
+
+        printf ("%6d: AVISA  PORTEIRO BASE %d ADMITE %2d\n", tempo, base->base_id, heroi->heroi_id);
+    }
+    return;
+}

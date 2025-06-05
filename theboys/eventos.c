@@ -103,3 +103,32 @@ void avisa(int tempo, heroi_t *heroi, base_t *base, struct fprio_t *lef)
     }
     return;
 }
+
+void entra(int tempo, heroi_t *heroi, base_t *base,struct fprio_t *lef)
+{
+    int tpb;
+    //calcula tpb = tempo de permanência na base:
+    tpb = 15 + heroi->paciencia * aleat(1,20);
+    //cria e insere na LEF o evento SAI (agora + TPB, H, B)
+    printf ("%6d: ENTRA HEROI %2d BASE %d (%2d/%2d) SAI %d\n", tempo, heroi->heroi_id, base->base_id, base->base_presentes->num, base->lotacao_max, tempo+tpb);
+
+    //insere o id na base, incrementa a qtde na funcao
+    cjto_insere(base->base_presentes,heroi->heroi_id);
+    //base->presentes->num++;
+
+    //adicao das hab do heroi ao cjto da base
+    base->hab_presentes=cjto_uniao(base->hab_presentes,heroi->habilidades);
+
+    //struct cjto_t *temporaria;
+    //temporaria = cjto_uniao(base->hab_presentes,heroi->habilidades);
+    //apaga cjto antigo
+    cjto_destroi(base->hab_presentes);
+    //base recebe novo conjunto com habilidades atualizadas
+    //base->hab_presentes = temporaria;//TESTAR SE O PONTEIRO AINDA RECEBE ALGO
+
+    struct evento *temp;
+    temp = itens(base,heroi,NULL,tempo);
+    fprio_insere(lef,temp,ev_sai,temp->tempo + tpb);
+
+    return;
+}

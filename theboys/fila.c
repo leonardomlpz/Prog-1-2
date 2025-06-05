@@ -121,6 +121,7 @@ void fila_imprime (struct fila_t *f)
 
     struct fila_nodo_t *aux;
     aux = f->prim;
+    //Casting para indicar que o meu item void eh uma estrutura heroi previamente definida
     printf ("(%d)", ((heroi_t *)aux->item)->heroi_id);
 
     for (int i = 2; i <= f->num; i++)

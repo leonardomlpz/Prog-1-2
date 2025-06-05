@@ -20,6 +20,7 @@ typedef struct base
     struct cjto_t *base_presentes;
     struct fila_t *espera;
     int coord_x,cood_y;
+    struct cjto_t *hab_presentes;
 } base_t;
 
 typedef struct missao

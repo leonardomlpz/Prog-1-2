@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "eventos.h"
+#include "mundo.h"
 
 int aleat (int min, int max)
 {

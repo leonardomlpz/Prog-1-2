@@ -37,13 +37,13 @@ void chega(int tempo, heroi_t *heroi, base_t *base,struct fprio_t *lef)
 
     if (esperar == 0)
     {
-        fprio_insere(lef,temp,ev_espera,temp->tempo);
+        fprio_insere(lef,temp,EV_ESPERA,temp->tempo);
 
         printf("%6d: CHEGA HEROI %2d BASE %d (%2d/%2d) ESPERA\n", tempo, heroi->heroi_id, base->base_id, base->base_presentes->num, base->base_presentes->cap);
     }
     else
     {
-        fprio_insere(lef,temp,ev_desiste,temp->tempo);
+        fprio_insere(lef,temp,EV_DESISTE,temp->tempo);
 
         printf("%6d: CHEGA HEROI %2d BASE %d (%2d/%2d) DESISTE\n", tempo, heroi->heroi_id, base->base_id, base->base_presentes->num, base->base_presentes->cap);
     }
@@ -58,7 +58,7 @@ void espera(int tempo, heroi_t *heroi, base_t *base, struct fprio_t *lef)
 
     evento_t *temp;
     temp = itens(base,heroi,NULL,tempo);
-    fprio_insere(lef,temp,ev_avisa,temp->tempo);
+    fprio_insere(lef,temp,EV_AVISA,temp->tempo);
 
     return;
 }
@@ -72,7 +72,7 @@ void desiste(int tempo, heroi_t *heroi, base_t *base, mundo_t *mundo, struct fpr
 
     evento_t *temp;
     temp = itens(destino,heroi,NULL,tempo);
-    fprio_insere(lef,temp,ev_viaja,temp->tempo);
+    fprio_insere(lef,temp,EV_VIAJA,temp->tempo);
 
     return;
 }
@@ -97,7 +97,7 @@ void avisa(int tempo, heroi_t *heroi, base_t *base, struct fprio_t *lef)
         base->espera->num--;
 
         temp = itens(base,heroi,NULL,tempo);
-        fprio_insere(lef,temp,ev_entra,temp->tempo);
+        fprio_insere(lef,temp,EV_ENTRA,temp->tempo);
 
         printf ("%6d: AVISA  PORTEIRO BASE %d ADMITE %2d\n", tempo, base->base_id, heroi->heroi_id);
     }
@@ -128,7 +128,7 @@ void entra(int tempo, heroi_t *heroi, base_t *base,struct fprio_t *lef)
 
     struct evento *temp;
     temp = itens(base,heroi,NULL,tempo);
-    fprio_insere(lef,temp,ev_sai,temp->tempo + tpb);
+    fprio_insere(lef,temp,EV_SAI,temp->tempo + tpb);
 
     return;
 }

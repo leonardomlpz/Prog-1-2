@@ -12,7 +12,7 @@ typedef struct heroi
     int paciencia;
     int velocidade;
     int exp;
-    int base;
+    int base_id;
     int vivo;
 } heroi_t;
 

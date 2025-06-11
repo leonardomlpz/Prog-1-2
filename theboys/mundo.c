@@ -20,6 +20,7 @@ heroi_t *cria_herois()
         herois[i].habilidades = cjto_aleat(aleat(1,3),NUM_HABILIDADES);
         herois[i].heroi_id = i;
         herois[i].vivo = 1;
+        herois[i].base_id = -1;
     }
 
     return herois;
@@ -46,6 +47,8 @@ base_t *cria_bases()
     return base;
 }
 
+//missao_t *cria_missoes()
+
 mundo_t *mundo_cria()
 {
     mundo_t *mundo;
@@ -63,6 +66,17 @@ mundo_t *mundo_cria()
         printf("erro ao criar bases\n");
         return NULL;
     }
+
+    // VER SE PRECISO COLOCAR NA STRUCT OS DEFINES
+    mundo->cood_x = TAM_MUNDO;
+    mundo->coord_y = TAM_MUNDO;
+    mundo->num_bases = NUM_BASES;
+    mundo->num_compostoV = NUM_COMPOSTOS_V;
+    mundo->num_hab = NUM_HABILIDADES;
+    mundo->num_hab = NUM_HABILIDADES;
+    mundo->num_herois = NUM_HEROIS;
+    mundo->num_missoes = T_FIM_MUNDO;
+    mundo->relogio = 0;
 
     return mundo;
 }

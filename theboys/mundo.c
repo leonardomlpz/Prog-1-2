@@ -2,11 +2,7 @@
 #include "mundo.h"
 #include "estruturas.h"
 #include "conjunto.h"
-
-long aleat (long min, long max)
-{
-	return rand() % (max - min + 1) + min;
-}
+#include "eventos.h"
 
 heroi_t *cria_herois()
 {
@@ -20,8 +16,8 @@ heroi_t *cria_herois()
         herois[i].exp = 0;
         herois[i].paciencia = aleat(0,100);
         herois[i].velocidade = aleat(50,5000);
-        herois[i].habilidades = cjto_aleat(NUM_HABILIDADES,aleat(1,3));
-        cjto_imprime(herois->habilidades);
+        //jeito correto de utilizar cjto_aleat
+        herois[i].habilidades = cjto_aleat(aleat(1,3),NUM_HABILIDADES);
         herois[i].heroi_id = i;
         herois[i].vivo = 1;
     }
@@ -54,18 +50,18 @@ mundo_t *mundo_cria()
 {
     mundo_t *mundo;
     if (! (mundo = malloc(sizeof(mundo_t))) )
-        return;
+        return NULL;
 
     if  (! (mundo->herois = cria_herois()) )
     {
         printf("erro ao criar herois\n");
-        return;
+        return NULL;
     }
 
     if (! (mundo->bases = cria_bases()) )
     {
         printf("erro ao criar bases\n");
-        return;
+        return NULL;
     }
 
     return mundo;

@@ -29,7 +29,7 @@ heroi_t *cria_herois()
     return herois;
 }
 
-base_t *bases()
+base_t *cria_bases()
 {
     base_t *base;
     if (! (base = malloc(NUM_BASES*sizeof(base_t))) )
@@ -42,7 +42,12 @@ base_t *bases()
         base[i].cood_y = aleat(0,TAM_MUNDO -1);
         base[i].lotacao_max = aleat(3,10);
         base[i].base_presentes = cjto_cria(base[i].lotacao_max);
+        base[i].espera = fila_cria();
+        //numero maximo de habilidades por heroi = 3 * qtde de herois maxima
+        base[i].base_presentes = cjto_cria(3*base[i].lotacao_max);
     }
+
+    return base;
 }
 
 mundo_t *mundo_cria()
@@ -51,6 +56,17 @@ mundo_t *mundo_cria()
     if (! (mundo = malloc(sizeof(mundo_t))) )
         return;
 
-    if  (! (mundo->herois = cria_herois()) );
-        return -1;
+    if  (! (mundo->herois = cria_herois()) )
+    {
+        printf("erro ao criar herois\n");
+        return;
+    }
+
+    if (! (mundo->bases = cria_bases()) )
+    {
+        printf("erro ao criar bases\n");
+        return;
+    }
+
+    return mundo;
 }

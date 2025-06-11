@@ -3,9 +3,9 @@
 #include "eventos.h"
 #include "mundo.h"
 
-int aleat (int min, int max)
+long aleat (int min, int max)
 {
-    return reand() % (max - min + 1) + min;
+    return rand() % (max - min + 1) + min;
 }
 
 evento_t *itens(base_t *base, heroi_t *heroi, missao_t *missao, int tempo)
@@ -92,7 +92,7 @@ void avisa(int tempo, heroi_t *heroi, base_t *base, struct fprio_t *lef)
     while (base->lotacao_max > base->base_presentes->num && base->espera->num > 0)
     {
         fila_retira(base->espera);
-        if ((cjto_insere(base->espera,heroi->heroi_id)) == -1)
+        if ((cjto_insere(base->base_presentes,heroi->heroi_id)) == -1)
             return;
         base->base_presentes->num++;
         base->espera->num--;

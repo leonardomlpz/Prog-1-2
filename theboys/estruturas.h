@@ -1,3 +1,6 @@
+#ifndef ESTRUTURAS
+#define ESTRUTURAS
+
 #include "conjunto.h"
 #include "fila.h"
 #include "fprio.h"
@@ -51,3 +54,5 @@ typedef struct evento
     missao_t *missao;
     int tempo;
 } evento_t;
+
+#endif

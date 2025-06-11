@@ -3,7 +3,7 @@
 
 #include "estruturas.h"
 
-int aleat (int min, int max);
+long aleat (int min, int max);
 
 evento_t *itens(base_t *base, heroi_t *heroi, missao_t *missao, int tempo);
 

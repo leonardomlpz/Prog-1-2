@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <math.h>
 #include "eventos.h"
 #include "mundo.h"
 
@@ -160,4 +161,61 @@ void sai(int tempo, heroi_t *heroi, base_t *base,mundo_t *mundo,struct fprio_t *
     printf ("%6d: SAI HEROI %2d BASE %d (%2d/%2d)\n", tempo, heroi->heroi_id, base->base_id, base->base_presentes->num, base->lotacao_max);
 
     return;
+}
+
+void viaja(int tempo, heroi_t *heroi, base_t *base,mundo_t *mundo,struct fprio_t *lef)
+{
+    base_t origem = mundo->bases[heroi->base_id];
+
+    float distancia = sqrt(pow(origem.coord_x - origem.coord_y, 2) + pow(origem.coord_y - origem.coord_x, 2));
+    float duracao = distancia / heroi->velocidade;
+
+    printf("%6d: VIAJA HEROI %2d BASE %2d BASE %2d DIST %.2f VEL %d CHEGA %.2f\n", tempo, heroi->heroi_id, heroi->base_id, base->base_id, distancia, heroi->velocidade, tempo + duracao);
+
+    evento_t *temp = itens(base, heroi, NULL, tempo + duracao);
+
+    fprio_insere(lef, temp, EV_CHEGA, temp->tempo);
+
+    return;
+}
+
+void morre(int tempo, heroi_t *heroi, base_t *base,struct missao *missao, struct fprio_t *lef)
+{
+    cjto_retira(base->base_presentes, heroi->heroi_id);
+
+    struct cjto_t *cjto_temp;
+    cjto_temp = cjto_dif(base->hab_presentes,heroi->habilidades);
+    cjto_destroi(base->hab_presentes);
+    base->hab_presentes = cjto_temp;
+
+    heroi->vivo = 0;
+
+    evento_t *temp;
+    temp = itens(base,heroi,missao,tempo);
+    fprio_insere(lef,temp,EV_AVISA,temp->tempo);
+
+    printf ("%6d: MORRE HEROI %2d MISSAO %d\n", tempo, heroi->heroi_id, missao->id);
+
+    return;
+}
+
+//Procura a base mais proxima
+//Ordena as bases com base nas distancias
+//Retorno indice da base que pode realizar ou 0 se nao pode realizar
+int bmp(mundo_t *mundo, missao_t *missao)
+{
+    float distancia;
+    int pode_ser_realizada = 0;
+
+    for (int i = 0; i < NUM_BASES; i++)
+    {
+        distancia = sqrt((pow(missao->coord_x - mundo->bases[i].coord_x, 2) + pow(missao->coord_y - mundo->bases[i].coord_y, 2)));
+        //criar um vetor igual para ordenar as bases com base nas missoes
+        //mundo->bases[]
+    }
+}
+
+void missao(int tempo,mundo_t *mundo, struct missao *missao, struct fprio_t *lef)
+{
+    
 }

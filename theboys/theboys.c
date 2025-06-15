@@ -1,4 +1,4 @@
-// programa principal do projeto "The Boys - 2024/2"
+// programa principal do projeto "The Boys - 2025/1"
 // Autor: Leonardo Martins Lopes, GRR 20242343
 
 // seus #includes vão aqui
@@ -20,9 +20,6 @@ int main ()
 
     mundo_t *mundo;
     mundo = mundo_cria();
-
-    mundo->relogio++;
-    //cjto_imprime(mundo->herois[0].habilidades);
 
     // executar o laço de simulação
 

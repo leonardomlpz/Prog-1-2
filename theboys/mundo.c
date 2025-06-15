@@ -42,12 +42,28 @@ base_t *cria_bases()
         base[i].espera = fila_cria();
         //numero maximo de habilidades por heroi = 3 * qtde de herois maxima
         base[i].base_presentes = cjto_cria(3*base[i].lotacao_max);
+        base[i].distancia_missao = 0;
     }
 
     return base;
 }
 
-//missao_t *cria_missoes()
+missao_t *cria_missoes()
+{
+    missao_t *missao;
+    if (! (missao = malloc(NUM_MISSOES*sizeof(missao_t))) )
+        return NULL;
+
+    for (int i = 0; i < NUM_MISSOES; i++)
+    {
+        missao->id = i;
+        missao->cood_x = aleat(0,TAM_MUNDO);
+        missao->cood_y = aleat(0,TAM_MUNDO);
+        missao->habilidades = cjto_aleat(aleat(6,10),NUM_HABILIDADES);
+    }
+
+    return missao;
+}
 
 mundo_t *mundo_cria()
 {
@@ -64,6 +80,12 @@ mundo_t *mundo_cria()
     if (! (mundo->bases = cria_bases()) )
     {
         printf("erro ao criar bases\n");
+        return NULL;
+    }
+
+    if (! (mundo->missoes = cria_missoes()) )
+    {
+        printf ("erro ao criar missoes\n");
         return NULL;
     }
 

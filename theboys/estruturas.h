@@ -22,15 +22,16 @@ typedef struct base
     int lotacao_max;
     struct cjto_t *base_presentes;
     struct fila_t *espera;
-    int coord_x,cood_y;
+    int coord_x,coord_y;
     struct cjto_t *hab_presentes;
+    int distancia_missao;
 } base_t;
 
 typedef struct missao
 {
     int id;
     struct cjto_t *habilidades;
-    int cood_x,cood_y;
+    int coord_x,coord_y;
 } missao_t;
 
 typedef struct mundo
@@ -43,7 +44,7 @@ typedef struct mundo
     missao_t *missoes;
     int num_hab;
     int num_compostoV;
-    int cood_x,coord_y;
+    int coord_x,coord_y;
     int relogio;
 } mundo_t;
 

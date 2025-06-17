@@ -41,13 +41,13 @@ void chega(int tempo, heroi_t *heroi, base_t *base,struct fprio_t *lef)
     {
         fprio_insere(lef,temp,EV_ESPERA,temp->tempo);
 
-        printf("%6d: CHEGA HEROI %2d BASE %d (%2d/%2d) ESPERA\n", tempo, heroi->heroi_id, base->base_id, base->base_presentes->num, base->base_presentes->cap);
+        printf("%6d: CHEGA HEROI %2d BASE %d (%2d/%2d) ESPERA\n", tempo, heroi->heroi_id, base->base_id, base->base_presentes->num, base->lotacao_max);
     }
     else
     {
         fprio_insere(lef,temp,EV_DESISTE,temp->tempo);
 
-        printf("%6d: CHEGA HEROI %2d BASE %d (%2d/%2d) DESISTE\n", tempo, heroi->heroi_id, base->base_id, base->base_presentes->num, base->base_presentes->cap);
+        printf("%6d: CHEGA HEROI %2d BASE %d (%2d/%2d) DESISTE\n", tempo, heroi->heroi_id, base->base_id, base->base_presentes->num, base->lotacao_max);
     }
     return;
 }
@@ -131,6 +131,9 @@ void entra(int tempo, heroi_t *heroi, base_t *base,struct fprio_t *lef)
     //base->presentes->num++;
     
     //adicao das hab do heroi ao cjto da base
+    printf("BASE [%d] HAB PRESENTES(antes de inserir):", base->base_id);
+    cjto_imprime(base->hab_presentes);
+    printf("\n");
     struct cjto_t *temporaria;
     //temporaria recebe as habilidades dos herois + das bases
     temporaria = cjto_uniao(base->hab_presentes,heroi->habilidades);
@@ -139,10 +142,7 @@ void entra(int tempo, heroi_t *heroi, base_t *base,struct fprio_t *lef)
     //base recebe novo conjunto com habilidades atualizadas
     base->hab_presentes = temporaria;
     
-    printf("BASE [%d] PRESENTES:", base->base_id);
-    cjto_imprime(base->base_presentes);
-    printf("\n");
-    printf("BASE [%d] HAB PRESENTES:", base->base_id);
+    printf("BASE [%d] PRESENTES:(depois da unicao das hab)", base->base_id);
     cjto_imprime(base->hab_presentes);
     printf("\n");
     
@@ -167,14 +167,14 @@ void sai(int tempo, heroi_t *heroi, base_t *base,mundo_t *mundo,struct fprio_t *
     cjto_destroi(base->hab_presentes);
     base->hab_presentes = temp;
 
-    evento_t *evento;
+    evento_t *evento1;
     evento_t *evento2;
     //calcula a base destino
-    evento = itens(&mundo->bases[aleat(0,NUM_BASES -1)],heroi,NULL,tempo);
-    fprio_insere(lef,evento,EV_VIAJA,evento->tempo);
+    evento1 = itens(&mundo->bases[aleat(0,NUM_BASES -1)],heroi,NULL,tempo);
+    fprio_insere(lef,evento1,EV_VIAJA,evento1->tempo);
     //muda para base da chamada da funcao para entrar o ev avisa
     evento2 = itens(base,heroi,NULL,tempo);
-    fprio_insere(lef,evento2,EV_AVISA,evento->tempo);
+    fprio_insere(lef,evento2,EV_AVISA,evento2->tempo);
 
     printf ("%6d: SAI HEROI %2d BASE %d (%2d/%2d)\n", tempo, heroi->heroi_id, base->base_id, base->base_presentes->num, base->lotacao_max);
 

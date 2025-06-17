@@ -96,8 +96,11 @@ void avisa(int tempo, heroi_t *heroi, base_t *base, struct fprio_t *lef)
         // testa se houve erro na remocao
         if (! (temp_heroi = fila_retira(base->espera)) )
             break;
-        if ((cjto_insere(base->base_presentes,temp_heroi->heroi_id)) == -1)
+        if ((base->qtde_presentes = cjto_insere(base->base_presentes,temp_heroi->heroi_id)) == -1)
+        {
+            printf ("ERRO AO INSERIR HEROI (%d) NA BASE (%d)\n", heroi->heroi_id,base->base_id);
             return;
+        }
         // REMOCAO DAS INCREMENTACOES DIRETO NA FILA
 
         temp = itens(base,temp_heroi,NULL,tempo);
@@ -116,19 +119,14 @@ void entra(int tempo, heroi_t *heroi, base_t *base,struct fprio_t *lef)
     tpb = 15 + heroi->paciencia * aleat(1,20);
     
     //insere o id na base, incrementa a qtde na funcao
-    base->qtde_presentes = cjto_insere(base->base_presentes,heroi->heroi_id);
-    if (base->qtde_presentes == -1)
-    {
-        printf ("ERRO AO INSERIR HEROI (%d) NA BASE (%d)\n", heroi->heroi_id,base->base_id);
-        return;
-    }
-
-    cjto_imprime(base->base_presentes);
-    printf("\n");
-    cjto_imprime(base->hab_presentes);
-    printf("\n");
-
-
+    //base->qtde_presentes = cjto_insere(base->base_presentes,heroi->heroi_id);
+    //if (base->qtde_presentes == -1)
+    //{
+    //    printf ("ERRO AO INSERIR HEROI (%d) NA BASE (%d)\n", heroi->heroi_id,base->base_id);
+    //    return;
+    //}
+    
+    
     printf ("%6d: ENTRA HEROI %2d BASE %d (%2d/%2d) SAI %d\n", tempo, heroi->heroi_id, base->base_id, base->qtde_presentes, base->lotacao_max, tempo+tpb);
     //base->presentes->num++;
     
@@ -141,9 +139,16 @@ void entra(int tempo, heroi_t *heroi, base_t *base,struct fprio_t *lef)
     //base recebe novo conjunto com habilidades atualizadas
     base->hab_presentes = temporaria;
     
+    printf("BASE [%d] PRESENTES:", base->base_id);
+    cjto_imprime(base->base_presentes);
+    printf("\n");
+    printf("BASE [%d] HAB PRESENTES:", base->base_id);
+    cjto_imprime(base->hab_presentes);
+    printf("\n");
+    
     //cria e insere na LEF o evento SAI (agora + TPB, H, B)
     evento_t *temp;
-    temp = itens(base,heroi,NULL,tpb);
+    temp = itens(base,heroi,NULL,tempo + tpb);
     fprio_insere(lef,temp,EV_SAI,temp->tempo);
 
     return;
@@ -163,12 +168,13 @@ void sai(int tempo, heroi_t *heroi, base_t *base,mundo_t *mundo,struct fprio_t *
     base->hab_presentes = temp;
 
     evento_t *evento;
+    evento_t *evento2;
     //calcula a base destino
     evento = itens(&mundo->bases[aleat(0,NUM_BASES -1)],heroi,NULL,tempo);
     fprio_insere(lef,evento,EV_VIAJA,evento->tempo);
     //muda para base da chamada da funcao para entrar o ev avisa
-    evento->base = base;
-    fprio_insere(lef,evento,EV_AVISA,evento->tempo);
+    evento2 = itens(base,heroi,NULL,tempo);
+    fprio_insere(lef,evento2,EV_AVISA,evento->tempo);
 
     printf ("%6d: SAI HEROI %2d BASE %d (%2d/%2d)\n", tempo, heroi->heroi_id, base->base_id, base->base_presentes->num, base->lotacao_max);
 

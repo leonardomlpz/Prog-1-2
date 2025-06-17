@@ -87,7 +87,7 @@ void avisa(int tempo, heroi_t *heroi, base_t *base, struct fprio_t *lef)
     evento_t *temp;
     heroi_t *temp_heroi;
 
-    printf ("%6d: AVISA  PORTEIRO BASE %d (%2d/%2d) FILA [ ", tempo, base->base_id, base->base_presentes->num, base->lotacao_max);
+    printf ("%6d: AVISA  PORTEIRO BASE %d (%2d/%2d) FILA [", tempo, base->base_id, base->base_presentes->num, base->lotacao_max);
     fila_imprime(base->espera);
     printf("]\n");
 

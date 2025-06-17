@@ -28,4 +28,6 @@
 
 mundo_t *mundo_cria();
 
+void inicia_herois(struct fprio_t *lef, mundo_t *mundo);
+
 #endif

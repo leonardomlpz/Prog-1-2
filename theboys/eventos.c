@@ -114,10 +114,22 @@ void entra(int tempo, heroi_t *heroi, base_t *base,struct fprio_t *lef)
 
     //calcula tpb = tempo de permanência na base:
     tpb = 15 + heroi->paciencia * aleat(1,20);
-    printf ("%6d: ENTRA HEROI %2d BASE %d (%2d/%2d) SAI %d\n", tempo, heroi->heroi_id, base->base_id, base->base_presentes->num, base->lotacao_max, tempo+tpb);
     
     //insere o id na base, incrementa a qtde na funcao
-    cjto_insere(base->base_presentes,heroi->heroi_id);
+    base->qtde_presentes = cjto_insere(base->base_presentes,heroi->heroi_id);
+    if (base->qtde_presentes == -1)
+    {
+        printf ("ERRO AO INSERIR HEROI (%d) NA BASE (%d)\n", heroi->heroi_id,base->base_id);
+        return;
+    }
+
+    cjto_imprime(base->base_presentes);
+    printf("\n");
+    cjto_imprime(base->hab_presentes);
+    printf("\n");
+
+
+    printf ("%6d: ENTRA HEROI %2d BASE %d (%2d/%2d) SAI %d\n", tempo, heroi->heroi_id, base->base_id, base->qtde_presentes, base->lotacao_max, tempo+tpb);
     //base->presentes->num++;
     
     //adicao das hab do heroi ao cjto da base
@@ -167,7 +179,7 @@ void viaja(int tempo, heroi_t *heroi, base_t *base,mundo_t *mundo,struct fprio_t
 {
     base_t origem = mundo->bases[heroi->base_id];
 
-    float distancia = sqrt(pow(origem.coord_x - origem.coord_y, 2) + pow(origem.coord_y - origem.coord_x, 2));
+    float distancia = sqrt(pow(origem.coord_x - base->coord_x, 2) + pow(origem.coord_y - base->coord_y, 2));
     float duracao = distancia / heroi->velocidade;
 
     printf("%6d: VIAJA HEROI %2d BASE %2d BASE %2d DIST %.2f VEL %d CHEGA %.2f\n", tempo, heroi->heroi_id, heroi->base_id, base->base_id, distancia, heroi->velocidade, tempo + duracao);
@@ -199,23 +211,90 @@ void morre(int tempo, heroi_t *heroi, base_t *base,struct missao *missao, struct
     return;
 }
 
-//Procura a base mais proxima
+void bubblesort(base_t *vetor, int tam)
+{
+    int i, j;
+    base_t temp;
+    for (i = 0; i < tam -1; i++)
+    {
+        for (j = 0; j < tam - i - 1; j++)
+        {
+            if (vetor[j].distancia_missao > vetor[j + 1].distancia_missao)
+            {
+                temp = vetor[j];
+                vetor[j] = vetor[j + 1];
+                vetor[j + 1] = temp;
+            }
+        }
+    }
+}
+
+//Procura a base mais proxima / testa se pode ser feita a missao na base
 //Ordena as bases com base nas distancias
 //Retorno indice da base que pode realizar ou 0 se nao pode realizar
-int bmp(mundo_t *mundo, missao_t *missao)
+int bmp(mundo_t *mundo, missao_t *missao, base_t *base_ordenada)
 {
-    float distancia;
+    float distancia = 0;
     int pode_ser_realizada = 0;
 
     for (int i = 0; i < NUM_BASES; i++)
     {
         distancia = sqrt((pow(missao->coord_x - mundo->bases[i].coord_x, 2) + pow(missao->coord_y - mundo->bases[i].coord_y, 2)));
         //criar um vetor igual para ordenar as bases com base nas missoes
-        //mundo->bases[]
+        base_ordenada[i].distancia_missao = distancia;
     }
+
+    bubblesort(base_ordenada,NUM_BASES);
+    
+    for (int i = 0; i < NUM_BASES; i++)
+    {
+        if (cjto_contem(base_ordenada[i].hab_presentes, missao->habilidades))
+        {
+            pode_ser_realizada = base_ordenada[i].base_id;
+            break;
+        }
+    }
+
+    return pode_ser_realizada;
 }
 
-void missao(int tempo,mundo_t *mundo, struct missao *missao, struct fprio_t *lef)
+void missao(int tempo,mundo_t *mundo, struct missao *missao, struct fprio_t *lef, base_t *base_ordenada)
 {
-    
+    evento_t *temp;
+    int pode_ser_realizada;
+    heroi_t *mais_exp;
+
+    pode_ser_realizada = bmp(mundo,missao,base_ordenada);
+
+    if (pode_ser_realizada)
+    {
+        missao->realizada = 1;
+        for (int i = 0; i < NUM_HEROIS; i++)
+            mundo->herois[i].exp++;
+    }
+    else
+    {
+        if (mundo->num_compostoV > 0 && ((tempo % 2500) == 0))
+        {
+            mundo->num_compostoV--;
+            missao->realizada = 1;
+            mais_exp = &mundo->herois[0];
+            for (int i = 1; i < NUM_HEROIS; i++)
+            {
+                if (mais_exp->exp < mundo->herois[i].exp)
+                    mais_exp = &mundo->herois[i];
+            }
+            temp = itens(NULL,mais_exp,missao,tempo);
+            fprio_insere(lef,temp,EV_MORRE,tempo);
+
+            for (int j = 0; j < NUM_HEROIS; j++)
+                if (mundo->herois[j].vivo)
+                    mundo->herois[j].exp++;
+        }
+        else
+        {
+            temp = itens(NULL,NULL,missao,tempo + 24*60);
+            fprio_insere(lef, temp, EV_MISSAO, temp->tempo);
+        }
+    }
 }

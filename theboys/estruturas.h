@@ -25,6 +25,7 @@ typedef struct base
     int coord_x,coord_y;
     struct cjto_t *hab_presentes;
     int distancia_missao;
+    int qtde_presentes;
 } base_t;
 
 typedef struct missao
@@ -32,6 +33,7 @@ typedef struct missao
     int id;
     struct cjto_t *habilidades;
     int coord_x,coord_y;
+    int realizada;
 } missao_t;
 
 typedef struct mundo

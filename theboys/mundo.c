@@ -36,12 +36,19 @@ base_t *cria_bases()
     {
         base[i].base_id = i;
         base[i].coord_x = aleat(0,TAM_MUNDO -1);
-        base[i].cood_y = aleat(0,TAM_MUNDO -1);
+        base[i].coord_y = aleat(0,TAM_MUNDO -1);
         base[i].lotacao_max = aleat(3,10);
         base[i].base_presentes = cjto_cria(base[i].lotacao_max);
+
+        if (base[i].base_presentes == NULL)
+        {
+            printf("ERRO AO CRIAR CJTO\n");
+            return NULL;
+        }
+
         base[i].espera = fila_cria();
         //numero maximo de habilidades por heroi = 3 * qtde de herois maxima
-        base[i].base_presentes = cjto_cria(3*base[i].lotacao_max);
+        base[i].hab_presentes = cjto_cria(3*base[i].lotacao_max);
         base[i].distancia_missao = 0;
     }
 
@@ -57,8 +64,8 @@ missao_t *cria_missoes()
     for (int i = 0; i < NUM_MISSOES; i++)
     {
         missao->id = i;
-        missao->cood_x = aleat(0,TAM_MUNDO);
-        missao->cood_y = aleat(0,TAM_MUNDO);
+        missao->coord_x = aleat(0,TAM_MUNDO);
+        missao->coord_y = aleat(0,TAM_MUNDO);
         missao->habilidades = cjto_aleat(aleat(6,10),NUM_HABILIDADES);
     }
 
@@ -90,7 +97,7 @@ mundo_t *mundo_cria()
     }
 
     // VER SE PRECISO COLOCAR NA STRUCT OS DEFINES
-    mundo->cood_x = TAM_MUNDO;
+    mundo->coord_x = TAM_MUNDO;
     mundo->coord_y = TAM_MUNDO;
     mundo->num_bases = NUM_BASES;
     mundo->num_compostoV = NUM_COMPOSTOS_V;
@@ -101,4 +108,19 @@ mundo_t *mundo_cria()
     mundo->relogio = 0;
 
     return mundo;
+}
+
+void inicia_herois(struct fprio_t *lef, mundo_t *mundo)
+{
+    evento_t *ev;
+    int tempo, base;
+    for (int i = 0; i < NUM_HEROIS; i++)
+    {
+        base = aleat(0, NUM_BASES -1);
+        tempo = aleat(0,4320);
+        ev = itens(&mundo->bases[base],&mundo->herois[i],NULL,tempo);
+        fprio_insere(lef,ev,EV_CHEGA,ev->tempo);
+    }
+
+    return;
 }

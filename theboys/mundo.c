@@ -38,8 +38,8 @@ base_t *cria_bases()
         base[i].coord_x = aleat(0,TAM_MUNDO -1);
         base[i].coord_y = aleat(0,TAM_MUNDO -1);
         base[i].lotacao_max = aleat(3,10);
-        base[i].base_presentes = cjto_cria(base[i].lotacao_max);
-
+        //base[i].base_presentes = cjto_cria(base[i].lotacao_max);
+        base[i].base_presentes = cjto_cria(NUM_HEROIS);
         if (base[i].base_presentes == NULL)
         {
             printf("ERRO AO CRIAR CJTO\n");
@@ -48,6 +48,7 @@ base_t *cria_bases()
 
         base[i].espera = fila_cria();
         //numero maximo de habilidades por heroi = 3 * qtde de herois maxima
+        //base[i].hab_presentes = cjto_cria(3*base[i].lotacao_max);
         base[i].hab_presentes = cjto_cria(3*base[i].lotacao_max);
         base[i].distancia_missao = 0;
     }

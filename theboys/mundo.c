@@ -68,6 +68,8 @@ missao_t *cria_missoes()
         missao->coord_x = aleat(0,TAM_MUNDO);
         missao->coord_y = aleat(0,TAM_MUNDO);
         missao->habilidades = cjto_aleat(aleat(6,10),NUM_HABILIDADES);
+        missao->realizada = 0;
+        missao->tentativas = 0;
     }
 
     return missao;
@@ -124,4 +126,16 @@ void inicia_herois(struct fprio_t *lef, mundo_t *mundo)
     }
 
     return;
+}
+
+void inicia_missoes(struct fprio_t *lef, mundo_t *mundo)
+{
+    evento_t *ev;
+    int tempo;
+    for (int i = 0; i < NUM_MISSOES; i++)
+    {
+        tempo = aleat(0,T_FIM_MUNDO);
+        ev = itens(NULL,NULL,&mundo->missoes[i],tempo);
+        fprio_insere(lef,ev,EV_MISSAO,ev->tempo);
+    }
 }

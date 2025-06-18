@@ -27,6 +27,7 @@ int main ()
     mundo_t *mundo;
     mundo = mundo_cria();
     inicia_herois(lef,mundo);
+    inicia_missoes(lef,mundo);
 
     base_t *bases_ordenadas;
     if (! (bases_ordenadas = malloc(NUM_BASES*sizeof(base_t))) )

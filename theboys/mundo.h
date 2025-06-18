@@ -18,10 +18,10 @@
 #define EV_FIM 10
 
 // inicializacao mundo
-#define T_FIM_MUNDO 10000 // MUDAR
+#define T_FIM_MUNDO 1000 // MUDAR
 #define TAM_MUNDO 10000
 #define NUM_HABILIDADES 10
-#define NUM_HEROIS (NUM_HABILIDADES * 5) //MUDAR DPS PARA SOMAR NUM_HAB * 5
+#define NUM_HEROIS (NUM_HABILIDADES * 5)
 #define NUM_BASES (NUM_HEROIS / 5)
 #define NUM_MISSOES (T_FIM_MUNDO / 100)
 #define NUM_COMPOSTOS_V (NUM_HABILIDADES * 3)
@@ -29,5 +29,7 @@
 mundo_t *mundo_cria();
 
 void inicia_herois(struct fprio_t *lef, mundo_t *mundo);
+
+void inicia_missoes(struct fprio_t *lef, mundo_t *mundo);
 
 #endif

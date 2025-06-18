@@ -96,7 +96,7 @@ void avisa(int tempo, heroi_t *heroi, base_t *base, struct fprio_t *lef)
         // testa se houve erro na remocao
         if (! (temp_heroi = fila_retira(base->espera)) )
             break;
-        if ((base->qtde_presentes = cjto_insere(base->base_presentes,temp_heroi->heroi_id)) == -1)
+        if ((cjto_insere(base->base_presentes,temp_heroi->heroi_id)) == -1)
         {
             printf ("ERRO AO INSERIR HEROI (%d) NA BASE (%d)\n", heroi->heroi_id,base->base_id);
             return;
@@ -118,23 +118,14 @@ void entra(int tempo, heroi_t *heroi, base_t *base,struct fprio_t *lef)
     //calcula tpb = tempo de permanência na base:
     tpb = 15 + heroi->paciencia * aleat(1,20);
     
-    //insere o id na base, incrementa a qtde na funcao
-    //base->qtde_presentes = cjto_insere(base->base_presentes,heroi->heroi_id);
-    //if (base->qtde_presentes == -1)
-    //{
-    //    printf ("ERRO AO INSERIR HEROI (%d) NA BASE (%d)\n", heroi->heroi_id,base->base_id);
-    //    return;
-    //}
-    
-    
-    printf ("%6d: ENTRA HEROI %2d BASE %d (%2d/%2d) SAI %d\n", tempo, heroi->heroi_id, base->base_id, base->qtde_presentes, base->lotacao_max, tempo+tpb);
+    printf ("%6d: ENTRA HEROI %2d BASE %d (%2d/%2d) SAI %d\n", tempo, heroi->heroi_id, base->base_id, base->base_presentes->num, base->lotacao_max, tempo+tpb);
     //base->presentes->num++;
     
-    //adicao das hab do heroi ao cjto da base
     printf("BASE [%d] HAB PRESENTES(antes de inserir):", base->base_id);
     cjto_imprime(base->hab_presentes);
     printf("\n");
     struct cjto_t *temporaria;
+    //adicao das hab do heroi ao cjto da base
     //temporaria recebe as habilidades dos herois + das bases
     temporaria = cjto_uniao(base->hab_presentes,heroi->habilidades);
     //destroi cjto antigo
@@ -238,7 +229,7 @@ void bubblesort(base_t *vetor, int tam)
 //Procura a base mais proxima / testa se pode ser feita a missao na base
 //Ordena as bases com base nas distancias
 //Retorno indice da base que pode realizar ou 0 se nao pode realizar
-int bmp(mundo_t *mundo, missao_t *missao, base_t *base_ordenada)
+int bmp(mundo_t *mundo, missao_t *missao, base_t *base_ordenada, int *dist)
 {
     float distancia = 0;
     int pode_ser_realizada = 0;
@@ -254,9 +245,10 @@ int bmp(mundo_t *mundo, missao_t *missao, base_t *base_ordenada)
     
     for (int i = 0; i < NUM_BASES; i++)
     {
-        if (cjto_contem(base_ordenada[i].hab_presentes, missao->habilidades))
+        if (cjto_contem(base_ordenada[i].hab_presentes, missao->habilidades) == 1)
         {
             pode_ser_realizada = base_ordenada[i].base_id;
+            *dist = base_ordenada[i].distancia_missao;
             break;
         }
     }
@@ -268,15 +260,37 @@ void missao(int tempo,mundo_t *mundo, struct missao *missao, struct fprio_t *lef
 {
     evento_t *temp;
     int pode_ser_realizada;
+    int distancia_missao;
     heroi_t *mais_exp;
 
-    pode_ser_realizada = bmp(mundo,missao,base_ordenada);
+    missao->tentativas++;
+    printf ("%6d: MISSAO %d TENT %d HAB REQ: [",tempo, missao->id,missao->tentativas);
+    cjto_imprime(missao->habilidades);
+    printf ("]\n");
+
+    pode_ser_realizada = bmp(mundo,missao,base_ordenada,&distancia_missao);
 
     if (pode_ser_realizada)
     {
         missao->realizada = 1;
+
+        printf("%6d: MISSAO %d BASE %d DIST %d HEROIS [", tempo, missao->id, mundo->bases[pode_ser_realizada].base_id,distancia_missao);
+        cjto_imprime(mundo->bases[pode_ser_realizada].base_presentes);
+        printf("]\n");
+
         for (int i = 0; i < NUM_HEROIS; i++)
-            mundo->herois[i].exp++;
+        {
+            if (mundo->herois[i].vivo)
+                //testa se o heroi esta na base que realizou a missao
+                if (cjto_pertence(mundo->bases[pode_ser_realizada].base_presentes,mundo->herois[i].heroi_id) == 1)
+                {
+                    mundo->herois[i].exp++;
+                    printf ("%6d: MISSAO %d HAB HEROI %2d: [",tempo, missao->id, mundo->herois[i].heroi_id);
+                    cjto_imprime(mundo->herois[i].habilidades);
+                    printf ("]\n");
+                }
+            
+        }
     }
     else
     {
@@ -293,9 +307,10 @@ void missao(int tempo,mundo_t *mundo, struct missao *missao, struct fprio_t *lef
             temp = itens(NULL,mais_exp,missao,tempo);
             fprio_insere(lef,temp,EV_MORRE,tempo);
 
-            for (int j = 0; j < NUM_HEROIS; j++)
-                if (mundo->herois[j].vivo)
-                    mundo->herois[j].exp++;
+            for (int i = 0; i < NUM_HEROIS; i++)
+                if (mundo->herois[i].vivo)
+                    if (cjto_pertence(base_ordenada[0].base_presentes,mundo->herois[i].heroi_id) == 1)
+                        mundo->herois[i].exp++;
         }
         else
         {
@@ -303,4 +318,8 @@ void missao(int tempo,mundo_t *mundo, struct missao *missao, struct fprio_t *lef
             fprio_insere(lef, temp, EV_MISSAO, temp->tempo);
         }
     }
+
+    
+
+    return;
 }

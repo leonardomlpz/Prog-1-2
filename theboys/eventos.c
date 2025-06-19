@@ -208,15 +208,15 @@ void morre(int tempo, heroi_t *heroi, base_t *base,struct missao *missao, struct
     return;
 }
 
-void bubblesort(base_t *vetor, int tam)
+void bubblesort(dist_t *vetor, int tam)
 {
     int i, j;
-    base_t temp;
+    dist_t temp;
     for (i = 0; i < tam -1; i++)
     {
         for (j = 0; j < tam - i - 1; j++)
         {
-            if (vetor[j].distancia_missao > vetor[j + 1].distancia_missao)
+            if (vetor[j].distancia > vetor[j + 1].distancia)
             {
                 temp = vetor[j];
                 vetor[j] = vetor[j + 1];
@@ -226,29 +226,59 @@ void bubblesort(base_t *vetor, int tam)
     }
 }
 
+////Procura a base mais proxima / testa se pode ser feita a missao na base
+////Ordena as bases com base nas distancias
+////Retorno indice da base que pode realizar ou 0 se nao pode realizar
+//int bmp(mundo_t *mundo, missao_t *missao, base_t *base_ordenada, int *dist)
+//{
+//    float distancia = 0;
+//    int pode_ser_realizada = 0;
+//
+//    for (int i = 0; i < NUM_BASES; i++)
+//    {
+//        distancia = sqrt((pow(missao->coord_x - mundo->bases[i].coord_x, 2) + pow(missao->coord_y - mundo->bases[i].coord_y, 2)));
+//        //criar um vetor igual para ordenar as bases com base nas missoes
+//        base_ordenada[i].distancia_missao = distancia;
+//    }
+//
+//    bubblesort(base_ordenada,NUM_BASES);
+//    
+//    for (int i = 0; i < NUM_BASES; i++)
+//    {
+//        if (cjto_contem(base_ordenada[i].hab_presentes, missao->habilidades) == 1)
+//        {
+//            pode_ser_realizada = base_ordenada[i].base_id;
+//            *dist = base_ordenada[i].distancia_missao;
+//            break;
+//        }
+//    }
+//
+//    return pode_ser_realizada;
+//}
+
 //Procura a base mais proxima / testa se pode ser feita a missao na base
 //Ordena as bases com base nas distancias
 //Retorno indice da base que pode realizar ou 0 se nao pode realizar
-int bmp(mundo_t *mundo, missao_t *missao, base_t *base_ordenada, int *dist)
+int bmp(mundo_t *mundo, missao_t *missao, dist_t *base_ordenada, int *dist)
 {
     float distancia = 0;
     int pode_ser_realizada = 0;
-
+    //calcula as distancias das bases em relacao a missao
     for (int i = 0; i < NUM_BASES; i++)
     {
-        distancia = sqrt((pow(missao->coord_x - mundo->bases[i].coord_x, 2) + pow(missao->coord_y - mundo->bases[i].coord_y, 2)));
-        //criar um vetor igual para ordenar as bases com base nas missoes
-        base_ordenada[i].distancia_missao = distancia;
+        distancia = sqrt((pow(missao->coord_x - base_ordenada[i].coord_x, 2) + pow(missao->coord_y - base_ordenada[i].coord_y, 2)));
+        base_ordenada[i].distancia = distancia;
     }
 
     bubblesort(base_ordenada,NUM_BASES);
     
     for (int i = 0; i < NUM_BASES; i++)
     {
-        if (cjto_contem(base_ordenada[i].hab_presentes, missao->habilidades) == 1)
+        if (cjto_contem(mundo->bases[base_ordenada[i].base_id].hab_presentes, missao->habilidades) == 1)
         {
-            pode_ser_realizada = base_ordenada[i].base_id;
-            *dist = base_ordenada[i].distancia_missao;
+            //pode_ser_realizada = base_ordenada[i].base_id;
+            pode_ser_realizada = mundo->bases[base_ordenada[i].base_id].base_id;
+            *dist = base_ordenada[i].distancia;
             break;
         }
     }
@@ -256,7 +286,7 @@ int bmp(mundo_t *mundo, missao_t *missao, base_t *base_ordenada, int *dist)
     return pode_ser_realizada;
 }
 
-void missao(int tempo,mundo_t *mundo, struct missao *missao, struct fprio_t *lef, base_t *base_ordenada)
+void missao(int tempo,mundo_t *mundo, struct missao *missao, struct fprio_t *lef, dist_t *base_ordenada)
 {
     evento_t *temp;
     int pode_ser_realizada;

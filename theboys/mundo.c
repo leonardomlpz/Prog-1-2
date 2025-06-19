@@ -75,6 +75,23 @@ missao_t *cria_missoes()
     return missao;
 }
 
+dist_t *cria_bases_distancias(mundo_t *mundo)
+{
+    dist_t *dist;
+    if (! (dist = malloc(NUM_BASES*sizeof(dist_t))) )
+        return NULL;
+
+    for (int i = 0; i < NUM_BASES; i++)
+    {
+        dist[i].base_id = mundo->bases[i].base_id;
+        dist[i].coord_x = mundo->bases[i].coord_x;
+        dist[i].coord_y = mundo->bases[i].coord_y;
+        dist[i].distancia = 0;
+    }
+
+    return dist;
+}
+
 mundo_t *mundo_cria()
 {
     mundo_t *mundo;
@@ -96,6 +113,12 @@ mundo_t *mundo_cria()
     if (! (mundo->missoes = cria_missoes()) )
     {
         printf ("erro ao criar missoes\n");
+        return NULL;
+    }
+
+    if (! (mundo->dist_miss_base = cria_bases_distancias(mundo)) )
+    {
+        printf("erro ao criar bases para distancia\n");
         return NULL;
     }
 

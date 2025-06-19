@@ -16,6 +16,14 @@ typedef struct heroi
     int vivo;
 } heroi_t;
 
+typedef struct distancia_missoes_bases
+{
+    int base_id;
+    int coord_x;
+    int coord_y;
+    float distancia;
+} dist_t;
+
 typedef struct base
 {
     int base_id;
@@ -48,6 +56,7 @@ typedef struct mundo
     int num_compostoV;
     int coord_x,coord_y;
     int relogio;
+    dist_t *dist_miss_base;
 } mundo_t;
 
 typedef struct evento

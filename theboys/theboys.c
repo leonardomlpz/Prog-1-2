@@ -42,7 +42,7 @@ int main ()
     fprio_insere(lef,ev,EV_FIM,T_FIM_MUNDO);
 
     int tipo,tempo;
-    while (ev->tempo <= T_FIM_MUNDO)
+    while (ev->tempo <= T_FIM_MUNDO && tipo != EV_FIM)
     {
         ev = fprio_retira(lef,&tipo,&tempo);
         if (ev == NULL)
@@ -52,41 +52,52 @@ int main ()
         {
             case EV_CHEGA:
                 chega(ev->tempo,ev->heroi,ev->base,lef);
+                free(ev);
                 break;
 
             case EV_ESPERA:
                 espera(ev->tempo,ev->heroi,ev->base,lef);
+                free(ev);
                 break;
 
             case EV_DESISTE:
                 desiste(ev->tempo,ev->heroi,ev->base,mundo,lef);
+                free(ev);
                 break;
 
             case EV_VIAJA:
                 viaja(ev->tempo,ev->heroi,ev->base,mundo,lef);
+                free(ev);
                 break;
 
             case EV_ENTRA:
                 entra(ev->tempo,ev->heroi,ev->base,lef);
+                free(ev);
                 break;
 
             case EV_SAI:
                 sai(ev->tempo,ev->heroi,ev->base,mundo,lef);
+                free(ev);
                 break;
 
             case EV_AVISA:
                 avisa(ev->tempo,ev->heroi,ev->base,lef);
+                free(ev);
                 break;
 
             case EV_MISSAO:
                 missao(ev->tempo,mundo,ev->missao,lef);
+                free(ev);
                 break;
 
             case EV_MORRE:
                 morre(ev->tempo,ev->heroi,ev->base,ev->missao,lef);
+                free(ev);
                 break;
 
             case EV_FIM:
+                fim(mundo);
+                free(ev);
                 break;
 
             default:

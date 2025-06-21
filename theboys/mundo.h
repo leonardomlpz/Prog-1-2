@@ -18,13 +18,16 @@
 #define EV_FIM 10
 
 // inicializacao mundo
-#define T_FIM_MUNDO 150000 // MUDAR 525600
+#define T_FIM_MUNDO 525600 // MUDAR 525600
 #define TAM_MUNDO 20000
 #define NUM_HABILIDADES 10
 #define NUM_HEROIS (NUM_HABILIDADES * 5)
 #define NUM_BASES (NUM_HEROIS / 5)
 #define NUM_MISSOES (T_FIM_MUNDO / 100)
 #define NUM_COMPOSTOS_V (NUM_HABILIDADES * 3)
+
+extern int ev_tratados;
+extern int herois_mortos;
 
 mundo_t *mundo_cria();
 

@@ -12,7 +12,6 @@ heroi_t *cria_herois()
     
     for (int i = 0; i < NUM_HEROIS; i++)
     {
-        herois[i].heroi_id = aleat(0,NUM_BASES - 1);
         herois[i].exp = 0;
         herois[i].paciencia = aleat(0,100);
         herois[i].velocidade = aleat(50,5000);
@@ -51,6 +50,7 @@ base_t *cria_bases()
         //base[i].hab_presentes = cjto_cria(3*base[i].lotacao_max);
         base[i].hab_presentes = cjto_cria(3*base[i].lotacao_max);
         base[i].distancia_missao = 0;
+        base[i].qtde_missoes = 0;
     }
 
     return base;
@@ -124,6 +124,7 @@ mundo_t *mundo_cria()
 
     // VER SE PRECISO COLOCAR NA STRUCT OS DEFINES
     mundo->num_compostoV = NUM_COMPOSTOS_V;
+    mundo->num_missoes_cumpridas = 0;
 
     return mundo;
 }
@@ -154,3 +155,8 @@ void inicia_missoes(struct fprio_t *lef, mundo_t *mundo)
         fprio_insere(lef,ev,EV_MISSAO,ev->tempo);
     }
 }
+
+//void mundo_destroi(mundo_t *mundo)
+//{
+//    
+//}

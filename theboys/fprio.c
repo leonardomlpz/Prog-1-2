@@ -89,6 +89,7 @@ struct fprio_t *fprio_destroi (struct fprio_t *f){
         //move para o proximo
         aux = aux->prox;
         //libera o atual
+        free (temp->item);
         free (temp);
         temp = NULL;
     }

@@ -23,7 +23,7 @@ void viaja(int tempo, heroi_t *heroi, base_t *base,mundo_t *mundo,struct fprio_t
 
 void morre(int tempo, heroi_t *heroi, base_t *base,struct missao *missao, struct fprio_t *lef);
 
-void missao(int tempo,mundo_t *mundo, struct missao *missao, struct fprio_t *lef, base_t *base_ordenada);
+void missao(int tempo,mundo_t *mundo, struct missao *missao, struct fprio_t *lef);
 
 void fim(mundo_t *mundo);
 

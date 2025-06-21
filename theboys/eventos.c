@@ -33,11 +33,11 @@ void chega(int tempo, heroi_t *heroi, base_t *base,struct fprio_t *lef)
     heroi->base_id = base->base_id;
 
     if (base->espera->num == 0 && base->lotacao_max > base->base_presentes->num)
-        esperar = 0;
+        esperar = 1;
     else
         esperar = (heroi->paciencia) > (10 * base->espera->num);
 
-    if (esperar == 0)
+    if (esperar)
     {
         fprio_insere(lef,temp,EV_ESPERA,temp->tempo);
 
@@ -70,7 +70,7 @@ void desiste(int tempo, heroi_t *heroi, base_t *base, mundo_t *mundo, struct fpr
     printf("%6d: DESISTE HEROI %2d BASE %d\n", tempo, heroi->heroi_id, base->base_id);
 
     base_t *destino;
-    destino = &mundo->bases[aleat(0,mundo->num_bases - 1)];
+    destino = &mundo->bases[aleat(0,NUM_BASES - 1)];
 
     evento_t *temp;
     temp = itens(destino,heroi,NULL,tempo);
@@ -98,7 +98,7 @@ void avisa(int tempo, heroi_t *heroi, base_t *base, struct fprio_t *lef)
             break;
         if ((cjto_insere(base->base_presentes,temp_heroi->heroi_id)) == -1)
         {
-            printf ("ERRO AO INSERIR HEROI (%d) NA BASE (%d)\n", heroi->heroi_id,base->base_id);
+            printf ("ERRO AO INSERIR HEROI (%d) NA BASE (%d)\n", temp_heroi->heroi_id,base->base_id);
             return;
         }
         // REMOCAO DAS INCREMENTACOES DIRETO NA FILA
@@ -106,7 +106,7 @@ void avisa(int tempo, heroi_t *heroi, base_t *base, struct fprio_t *lef)
         temp = itens(base,temp_heroi,NULL,tempo);
         fprio_insere(lef,temp,EV_ENTRA,temp->tempo);
 
-        printf ("%6d: AVISA  PORTEIRO BASE %d ADMITE %2d\n", tempo, base->base_id, heroi->heroi_id);
+        printf ("%6d: AVISA  PORTEIRO BASE %d ADMITE %2d\n", tempo, base->base_id, temp_heroi->heroi_id);
     }
     return;
 }
@@ -158,6 +158,32 @@ void sai(int tempo, heroi_t *heroi, base_t *base,mundo_t *mundo,struct fprio_t *
     cjto_destroi(base->hab_presentes);
     base->hab_presentes = temp;
 
+
+    printf("%6d: INICIO BASE %2d HABILIDADES INCERCAO: [", tempo, base->base_id);
+    cjto_imprime(base->hab_presentes);
+    printf("]\n");
+    for (int i = 0; i < NUM_HEROIS; i++)
+    {
+        if (cjto_pertence(base->base_presentes,mundo->herois[i].heroi_id) == 1)
+        {
+            printf("%6d:        INCERCAO HEROI %2d HABILIDADES: [", tempo, mundo->herois[i].heroi_id);
+            cjto_imprime(mundo->herois[i].habilidades);
+            printf("]\n");
+            
+            temp = cjto_uniao(base->hab_presentes,mundo->herois[i].habilidades);
+            cjto_destroi(base->hab_presentes);
+            base->hab_presentes = temp;
+
+            printf("%6d:        BASE %2d HABILIDADES INCERCAO MEIO: [", tempo, base->base_id);
+            cjto_imprime(base->hab_presentes);
+            printf("]\n");
+        }
+    }
+
+    printf("%6d: FINAL BASE %2d HABILIDADES INCERCAO: [", tempo, base->base_id);
+    cjto_imprime(base->hab_presentes);
+    printf("]\n");
+
     evento_t *evento1;
     evento_t *evento2;
     //calcula a base destino
@@ -175,9 +201,14 @@ void sai(int tempo, heroi_t *heroi, base_t *base,mundo_t *mundo,struct fprio_t *
 void viaja(int tempo, heroi_t *heroi, base_t *base,mundo_t *mundo,struct fprio_t *lef)
 {
     base_t origem = mundo->bases[heroi->base_id];
+    double dx,dy;
+    double distancia;
+    double duracao;
 
-    float distancia = sqrt(pow(origem.coord_x - base->coord_x, 2) + pow(origem.coord_y - base->coord_y, 2));
-    float duracao = distancia / heroi->velocidade;
+    dx = origem.coord_x - base->coord_x;
+    dy = origem.coord_y - base->coord_y;
+    distancia = sqrt(dx * dx + dy * dy);
+    duracao = distancia / heroi->velocidade;
 
     printf("%6d: VIAJA HEROI %2d BASE %2d BASE %2d DIST %.2f VEL %d CHEGA %.2f\n", tempo, heroi->heroi_id, heroi->base_id, base->base_id, distancia, heroi->velocidade, tempo + duracao);
 
@@ -226,41 +257,12 @@ void bubblesort(dist_t *vetor, int tam)
     }
 }
 
-////Procura a base mais proxima / testa se pode ser feita a missao na base
-////Ordena as bases com base nas distancias
-////Retorno indice da base que pode realizar ou 0 se nao pode realizar
-//int bmp(mundo_t *mundo, missao_t *missao, base_t *base_ordenada, int *dist)
-//{
-//    float distancia = 0;
-//    int pode_ser_realizada = 0;
-//
-//    for (int i = 0; i < NUM_BASES; i++)
-//    {
-//        distancia = sqrt((pow(missao->coord_x - mundo->bases[i].coord_x, 2) + pow(missao->coord_y - mundo->bases[i].coord_y, 2)));
-//        //criar um vetor igual para ordenar as bases com base nas missoes
-//        base_ordenada[i].distancia_missao = distancia;
-//    }
-//
-//    bubblesort(base_ordenada,NUM_BASES);
-//    
-//    for (int i = 0; i < NUM_BASES; i++)
-//    {
-//        if (cjto_contem(base_ordenada[i].hab_presentes, missao->habilidades) == 1)
-//        {
-//            pode_ser_realizada = base_ordenada[i].base_id;
-//            *dist = base_ordenada[i].distancia_missao;
-//            break;
-//        }
-//    }
-//
-//    return pode_ser_realizada;
-//}
-
 //Procura a base mais proxima / testa se pode ser feita a missao na base
 //Ordena as bases com base nas distancias
 //Retorno indice da base que pode realizar ou 0 se nao pode realizar
 int bmp(mundo_t *mundo, missao_t *missao, dist_t *base_ordenada, int *dist)
 {
+    int indice = 0;
     float distancia = 0;
     int pode_ser_realizada = 0;
     //calcula as distancias das bases em relacao a missao
@@ -274,10 +276,11 @@ int bmp(mundo_t *mundo, missao_t *missao, dist_t *base_ordenada, int *dist)
     
     for (int i = 0; i < NUM_BASES; i++)
     {
-        if (cjto_contem(mundo->bases[base_ordenada[i].base_id].hab_presentes, missao->habilidades) == 1)
+        indice = base_ordenada[i].base_id;
+        if (cjto_contem(mundo->bases[indice].hab_presentes, missao->habilidades) == 1)
         {
             //pode_ser_realizada = base_ordenada[i].base_id;
-            pode_ser_realizada = mundo->bases[base_ordenada[i].base_id].base_id;
+            pode_ser_realizada = mundo->bases[indice].base_id;
             *dist = base_ordenada[i].distancia;
             break;
         }
@@ -286,19 +289,41 @@ int bmp(mundo_t *mundo, missao_t *missao, dist_t *base_ordenada, int *dist)
     return pode_ser_realizada;
 }
 
-void missao(int tempo,mundo_t *mundo, struct missao *missao, struct fprio_t *lef, dist_t *base_ordenada)
+void missao(int tempo,mundo_t *mundo, struct missao *missao, struct fprio_t *lef)
 {
     evento_t *temp;
     int pode_ser_realizada;
     int distancia_missao;
-    heroi_t *mais_exp;
+    heroi_t *heroi_mais_exp;
+    base_t *base_capaz;
+
+    //heroi apenas para achar o heroi mais experiente da base
+    heroi_t *inutil;
+    if (! (inutil = malloc(sizeof(heroi_t))) )
+        return;
+    inutil->exp = -1;
 
     missao->tentativas++;
+    printf ("\n");
     printf ("%6d: MISSAO %d TENT %d HAB REQ: [",tempo, missao->id,missao->tentativas);
     cjto_imprime(missao->habilidades);
     printf ("]\n");
 
-    pode_ser_realizada = bmp(mundo,missao,base_ordenada,&distancia_missao);
+    //
+
+    for (int i = 0; i < NUM_BASES; i++)
+    {
+        //printf("%6d: MISSAO %d BASE %d PRESENTES: [",tempo,missao->id,mundo->bases[i].base_id);
+        //cjto_imprime(mundo->bases[i].base_presentes);
+        //printf("]\n");
+
+        printf("%6d: MISSAO %d HAB BASE %d: [",tempo,missao->id,mundo->bases[i].base_id);
+        cjto_imprime(mundo->bases[i].hab_presentes);
+        printf("]\n");
+    }
+
+    //
+    pode_ser_realizada = bmp(mundo,missao,mundo->dist_miss_base,&distancia_missao);
 
     if (pode_ser_realizada)
     {
@@ -306,6 +331,10 @@ void missao(int tempo,mundo_t *mundo, struct missao *missao, struct fprio_t *lef
 
         printf("%6d: MISSAO %d BASE %d DIST %d HEROIS [", tempo, missao->id, mundo->bases[pode_ser_realizada].base_id,distancia_missao);
         cjto_imprime(mundo->bases[pode_ser_realizada].base_presentes);
+        printf("]\n");
+
+        printf("%6d: MISSAO %d CUMPRIDA BASE %d HABS: [",tempo,missao->id,mundo->bases[pode_ser_realizada].base_id);
+        cjto_imprime(mundo->bases[pode_ser_realizada].hab_presentes);
         printf("]\n");
 
         for (int i = 0; i < NUM_HEROIS; i++)
@@ -326,30 +355,48 @@ void missao(int tempo,mundo_t *mundo, struct missao *missao, struct fprio_t *lef
     {
         if (mundo->num_compostoV > 0 && ((tempo % 2500) == 0))
         {
+            base_capaz = &mundo->bases[mundo->dist_miss_base[0].base_id];
+
+            printf("%6d: MISSAO %d CUMPRIDA BASE %d HABS: [",tempo,missao->id,base_capaz->base_id);
+            cjto_imprime(base_capaz->hab_presentes);
+            printf("]\n");
+
+            heroi_mais_exp = inutil;
             mundo->num_compostoV--;
             missao->realizada = 1;
-            mais_exp = &mundo->herois[0];
-            for (int i = 1; i < NUM_HEROIS; i++)
+            //heroi_mais_exp = &mundo->herois[0];
+            for (int i = 0; i < NUM_HEROIS; i++)
             {
-                if (mais_exp->exp < mundo->herois[i].exp)
-                    mais_exp = &mundo->herois[i];
+                //confere se heroi esta na base mais proxima
+                //acha o heroi mais experiente na bmp
+                if (cjto_pertence(base_capaz->base_presentes,mundo->herois[i].heroi_id) == 1)
+                    if (heroi_mais_exp->exp < mundo->herois[i].exp)
+                        heroi_mais_exp = &mundo->herois[i];
             }
-            temp = itens(NULL,mais_exp,missao,tempo);
+            temp = itens(base_capaz,heroi_mais_exp,missao,tempo);
             fprio_insere(lef,temp,EV_MORRE,tempo);
 
             for (int i = 0; i < NUM_HEROIS; i++)
                 if (mundo->herois[i].vivo)
-                    if (cjto_pertence(base_ordenada[0].base_presentes,mundo->herois[i].heroi_id) == 1)
+                    if (cjto_pertence(base_capaz->base_presentes,mundo->herois[i].heroi_id) == 1)
+                    {
                         mundo->herois[i].exp++;
+                        printf ("%6d: MISSAO %d HAB HEROI %2d: [",tempo, missao->id, mundo->herois[i].heroi_id);
+                        cjto_imprime(mundo->herois[i].habilidades);
+                        printf ("]\n");
+                    }
         }
         else
         {
             temp = itens(NULL,NULL,missao,tempo + 24*60);
             fprio_insere(lef, temp, EV_MISSAO, temp->tempo);
+
+            printf("%6d: MISSAO %d IMPOSSIVEL\n", tempo,missao->id);
         }
     }
 
-    
+
+    free (inutil);
 
     return;
 }

@@ -64,12 +64,12 @@ missao_t *cria_missoes()
 
     for (int i = 0; i < NUM_MISSOES; i++)
     {
-        missao->id = i;
-        missao->coord_x = aleat(0,TAM_MUNDO);
-        missao->coord_y = aleat(0,TAM_MUNDO);
-        missao->habilidades = cjto_aleat(aleat(6,10),NUM_HABILIDADES);
-        missao->realizada = 0;
-        missao->tentativas = 0;
+        missao[i].id = i;
+        missao[i].coord_x = aleat(0,TAM_MUNDO);
+        missao[i].coord_y = aleat(0,TAM_MUNDO);
+        missao[i].habilidades = cjto_aleat(aleat(6,10),NUM_HABILIDADES);
+        missao[i].realizada = 0;
+        missao[i].tentativas = 0;
     }
 
     return missao;
@@ -123,15 +123,7 @@ mundo_t *mundo_cria()
     }
 
     // VER SE PRECISO COLOCAR NA STRUCT OS DEFINES
-    mundo->coord_x = TAM_MUNDO;
-    mundo->coord_y = TAM_MUNDO;
-    mundo->num_bases = NUM_BASES;
     mundo->num_compostoV = NUM_COMPOSTOS_V;
-    mundo->num_hab = NUM_HABILIDADES;
-    mundo->num_hab = NUM_HABILIDADES;
-    mundo->num_herois = NUM_HEROIS;
-    mundo->num_missoes = T_FIM_MUNDO;
-    mundo->relogio = 0;
 
     return mundo;
 }

@@ -79,7 +79,7 @@ int main ()
                 break;
 
             case EV_MISSAO:
-                missao(ev->tempo,mundo,ev->missao,lef,bases_ordenadas);
+                missao(ev->tempo,mundo,ev->missao,lef);
                 break;
 
             case EV_MORRE:

@@ -46,16 +46,10 @@ typedef struct missao
 
 typedef struct mundo
 {
-    int num_herois;
     heroi_t *herois;
-    int num_bases;
     base_t *bases;
-    int num_missoes;
     missao_t *missoes;
-    int num_hab;
     int num_compostoV;
-    int coord_x,coord_y;
-    int relogio;
     dist_t *dist_miss_base;
 } mundo_t;
 

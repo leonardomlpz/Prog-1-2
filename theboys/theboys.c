@@ -29,11 +29,11 @@ int main ()
     inicia_herois(lef,mundo);
     inicia_missoes(lef,mundo);
 
-    base_t *bases_ordenadas;
-    if (! (bases_ordenadas = malloc(NUM_BASES*sizeof(base_t))) )
-        return 0;
-    // cria uma copia das bases para reordenar a cada missao
-    memcpy(bases_ordenadas, mundo->bases, NUM_BASES*sizeof(base_t));
+    //base_t *bases_ordenadas;
+    //if (! (bases_ordenadas = malloc(NUM_BASES*sizeof(base_t))) )
+    //    return 0;
+    //// cria uma copia das bases para reordenar a cada missao
+    //memcpy(bases_ordenadas, mundo->bases, NUM_BASES*sizeof(base_t));
 
     // executar o laço de simulação
     evento_t *ev;
@@ -84,6 +84,7 @@ int main ()
 
             case EV_MORRE:
                 morre(ev->tempo,ev->heroi,ev->base,ev->missao,lef);
+                break;
 
             case EV_FIM:
                 break;

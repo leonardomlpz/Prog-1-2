@@ -129,9 +129,9 @@ void entra(int tempo, heroi_t *heroi, base_t *base,struct fprio_t *lef)
     printf ("%6d: ENTRA HEROI %2d BASE %d (%2d/%2d) SAI %d\n", tempo, heroi->heroi_id, base->base_id, base->base_presentes->num, base->lotacao_max, tempo+tpb);
     //base->presentes->num++;
     
-    printf("BASE [%d] HAB PRESENTES(antes de inserir):", base->base_id);
-    cjto_imprime(base->hab_presentes);
-    printf("\n");
+    //printf("BASE [%d] HAB PRESENTES(antes de inserir):", base->base_id);
+    //cjto_imprime(base->hab_presentes);
+    //printf("\n");
     struct cjto_t *temporaria;
     //adicao das hab do heroi ao cjto da base
     //temporaria recebe as habilidades dos herois + das bases
@@ -141,9 +141,9 @@ void entra(int tempo, heroi_t *heroi, base_t *base,struct fprio_t *lef)
     //base recebe novo conjunto com habilidades atualizadas
     base->hab_presentes = temporaria;
     
-    printf("BASE [%d] PRESENTES:(depois da unicao das hab)", base->base_id);
-    cjto_imprime(base->hab_presentes);
-    printf("\n");
+    //printf("BASE [%d] PRESENTES:(depois da unicao das hab)", base->base_id);
+    //cjto_imprime(base->hab_presentes);
+    //printf("\n");
     
     //cria e insere na LEF o evento SAI (agora + TPB, H, B)
     evento_t *temp;
@@ -168,26 +168,26 @@ void sai(int tempo, heroi_t *heroi, base_t *base,mundo_t *mundo,struct fprio_t *
     base->hab_presentes = temp;
 
 
-    printf("%6d: INICIO BASE %2d HABILIDADES INCERCAO: [", tempo, base->base_id);
-    cjto_imprime(base->hab_presentes);
-    printf("]\n");
-    for (int i = 0; i < NUM_HEROIS; i++)
-    {
-        if (cjto_pertence(base->base_presentes,mundo->herois[i].heroi_id) == 1)
-        {
-            printf("%6d:        INCERCAO HEROI %2d HABILIDADES: [", tempo, mundo->herois[i].heroi_id);
-            cjto_imprime(mundo->herois[i].habilidades);
-            printf("]\n");
-            
-            temp = cjto_uniao(base->hab_presentes,mundo->herois[i].habilidades);
-            cjto_destroi(base->hab_presentes);
-            base->hab_presentes = temp;
-
-            printf("%6d:        BASE %2d HABILIDADES INCERCAO MEIO: [", tempo, base->base_id);
-            cjto_imprime(base->hab_presentes);
-            printf("]\n");
-        }
-    }
+    //printf("%6d: INICIO BASE %2d HABILIDADES INCERCAO: [", tempo, base->base_id);
+    //cjto_imprime(base->hab_presentes);
+    //printf("]\n");
+    //for (int i = 0; i < NUM_HEROIS; i++)
+    //{
+    //    if (cjto_pertence(base->base_presentes,mundo->herois[i].heroi_id) == 1)
+    //    {
+    //        printf("%6d:        INCERCAO HEROI %2d HABILIDADES: [", tempo, mundo->herois[i].heroi_id);
+    //        cjto_imprime(mundo->herois[i].habilidades);
+    //        printf("]\n");
+    //        
+    //        temp = cjto_uniao(base->hab_presentes,mundo->herois[i].habilidades);
+    //        cjto_destroi(base->hab_presentes);
+    //        base->hab_presentes = temp;
+//
+    //        printf("%6d:        BASE %2d HABILIDADES INCERCAO MEIO: [", tempo, base->base_id);
+    //        cjto_imprime(base->hab_presentes);
+    //        printf("]\n");
+    //    }
+    //}
 
     printf("%6d: FINAL BASE %2d HABILIDADES INCERCAO: [", tempo, base->base_id);
     cjto_imprime(base->hab_presentes);
@@ -276,7 +276,7 @@ int bmp(mundo_t *mundo, missao_t *missao, dist_t *base_ordenada, int *dist)
 {
     int indice = 0;
     float distancia = 0;
-    int pode_ser_realizada = 0;
+    int pode_ser_realizada = -1;
     //calcula as distancias das bases em relacao a missao
     for (int i = 0; i < NUM_BASES; i++)
     {
@@ -338,7 +338,7 @@ void missao(int tempo,mundo_t *mundo, struct missao *missao, struct fprio_t *lef
     //
     pode_ser_realizada = bmp(mundo,missao,mundo->dist_miss_base,&distancia_missao);
 
-    if (pode_ser_realizada)
+    if (pode_ser_realizada > -1)
     {
         missao->realizada = 1;
         mundo->num_missoes_cumpridas++;
@@ -424,6 +424,8 @@ void fim(mundo_t *mundo)
     base_t *b_temp;
     int tentativas_min, tentativas_max;
     float media_tentativas;
+    int soma = 0;
+
     for (int i = 0; i < NUM_HEROIS; i++)
     {
         h_temp = &mundo->herois[i];
@@ -448,7 +450,7 @@ void fim(mundo_t *mundo)
     }
 
     printf("EVENTOS TRATADOS: %d\n", ev_tratados);
-    printf("MISSOES CUMPRIDAS: %d/%d (%.1f%%)\n", mundo->num_missoes_cumpridas, NUM_MISSOES, (float) 100 * mundo->num_missoes_cumpridas/NUM_MISSOES);
+    printf("MISSOES CUMPRIDAS: %d/%d (%.1f%%)\n", mundo->num_missoes_cumpridas, NUM_MISSOES, (float) (100 * mundo->num_missoes_cumpridas)/NUM_MISSOES);
 
     tentativas_min = mundo->missoes[0].tentativas;
     tentativas_max = mundo->missoes[0].tentativas;
@@ -460,9 +462,13 @@ void fim(mundo_t *mundo)
         if (tentativas_max < mundo->missoes[i].tentativas)
             tentativas_max = mundo->missoes[i].tentativas;
     }
-    media_tentativas = (tentativas_max + tentativas_min) / 2;
+    for (int i = 0; i < NUM_MISSOES; i++)
+        soma += mundo->missoes[i].tentativas;
+
+    media_tentativas = (float)soma / NUM_MISSOES;
+    //media_tentativas = (tentativas_max + tentativas_min) / 2;
 
     printf("TENTATIVAS/MISSAO: MIN %d, MAX %d, MEDIA %.1f\n", tentativas_min, tentativas_max, media_tentativas);
 
-    printf("TAXA MORTALIDADE: %.1f%%\n",(float) 100 * herois_mortos/NUM_HEROIS);
+    printf("TAXA MORTALIDADE: %.1f%%\n",(float) (100 * herois_mortos)/NUM_HEROIS);
 }

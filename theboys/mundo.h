@@ -18,7 +18,7 @@
 #define EV_FIM 10
 
 // inicializacao mundo
-#define T_FIM_MUNDO 10000 // MUDAR 525600
+#define T_FIM_MUNDO 525600 // MUDAR 525600
 #define TAM_MUNDO 20000
 #define NUM_HABILIDADES 10
 #define NUM_HEROIS (NUM_HABILIDADES * 5)

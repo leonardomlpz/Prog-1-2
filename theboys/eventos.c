@@ -324,16 +324,16 @@ void missao(int tempo,mundo_t *mundo, struct missao *missao, struct fprio_t *lef
 
     //
 
-    for (int i = 0; i < NUM_BASES; i++)
-    {
-        //printf("%6d: MISSAO %d BASE %d PRESENTES: [",tempo,missao->id,mundo->bases[i].base_id);
-        //cjto_imprime(mundo->bases[i].base_presentes);
-        //printf("]\n");
-
-        printf("%6d: MISSAO %d HAB BASE %d: [",tempo,missao->id,mundo->bases[i].base_id);
-        cjto_imprime(mundo->bases[i].hab_presentes);
-        printf("]\n");
-    }
+    //for (int i = 0; i < NUM_BASES; i++)
+    //{
+    //    //printf("%6d: MISSAO %d BASE %d PRESENTES: [",tempo,missao->id,mundo->bases[i].base_id);
+    //    //cjto_imprime(mundo->bases[i].base_presentes);
+    //    //printf("]\n");
+//
+    //    printf("%6d: MISSAO %d HAB BASE %d: [",tempo,missao->id,mundo->bases[i].base_id);
+    //    cjto_imprime(mundo->bases[i].hab_presentes);
+    //    printf("]\n");
+    //}
 
     //
     pode_ser_realizada = bmp(mundo,missao,mundo->dist_miss_base,&distancia_missao);

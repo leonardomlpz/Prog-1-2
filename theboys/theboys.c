@@ -19,7 +19,6 @@ int main ()
     //srand(time(NULL));
     srand(0);
     // iniciar o mundo
-
     struct fprio_t *lef;
     if (! (lef = malloc(sizeof(struct fprio_t))) )
         return 0;
@@ -28,12 +27,6 @@ int main ()
     mundo = mundo_cria();
     inicia_herois(lef,mundo);
     inicia_missoes(lef,mundo);
-
-    //base_t *bases_ordenadas;
-    //if (! (bases_ordenadas = malloc(NUM_BASES*sizeof(base_t))) )
-    //    return 0;
-    //// cria uma copia das bases para reordenar a cada missao
-    //memcpy(bases_ordenadas, mundo->bases, NUM_BASES*sizeof(base_t));
 
     // executar o laço de simulação
     evento_t *ev;
@@ -104,8 +97,10 @@ int main ()
                 break;
         }
     }
-
     // destruir o mundo
+    mundo_destroi(mundo);
+    fprio_destroi(lef);
+
     return 0;
 }
 

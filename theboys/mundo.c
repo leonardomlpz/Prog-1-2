@@ -156,7 +156,28 @@ void inicia_missoes(struct fprio_t *lef, mundo_t *mundo)
     }
 }
 
-//void mundo_destroi(mundo_t *mundo)
-//{
-//    
-//}
+void destroi_base(base_t *base)
+{
+    cjto_destroi(base->base_presentes);
+    fila_destroi(base->espera);
+    cjto_destroi(base->hab_presentes);
+}
+
+void mundo_destroi(mundo_t *mundo)
+{
+    for (int i = 0; i < NUM_HEROIS; i++)
+    {
+        cjto_destroi(mundo->herois[i].habilidades);
+        //free(&mundo->herois[i]);
+
+        cjto_destroi(mundo->missoes[i].habilidades);
+        //free(&mundo->missoes[i]);
+
+        destroi_base(&mundo->bases[i]);
+        //free(&mundo->bases[i]);
+    }
+
+    free(mundo);
+
+    return;
+}

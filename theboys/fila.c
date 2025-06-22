@@ -20,7 +20,7 @@ struct fila_t *fila_cria ()
 struct fila_t *fila_destroi (struct fila_t *f)
 {
     struct fila_nodo_t *aux;
-    aux = f->fim;
+    aux = f->prim;
 
     if (f == NULL || f->num < 0)
         return NULL;

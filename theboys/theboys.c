@@ -16,8 +16,8 @@
 // programa principal
 int main ()
 {
-    //srand(time(NULL));
-    srand(0);
+    srand(time(NULL));
+    //srand(7);
     // iniciar o mundo
     struct fprio_t *lef;
     if (! (lef = fprio_cria()) )
@@ -84,7 +84,7 @@ int main ()
                 break;
 
             case EV_MORRE:
-                morre(ev->tempo,ev->heroi,ev->base,ev->missao,lef);
+                morre(ev->tempo,ev->heroi,ev->base,mundo,ev->missao,lef);
                 free(ev);
                 break;
 

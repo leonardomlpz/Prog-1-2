@@ -20,7 +20,7 @@ int main ()
     srand(0);
     // iniciar o mundo
     struct fprio_t *lef;
-    if (! (lef = malloc(sizeof(struct fprio_t))) )
+    if (! (lef = fprio_cria()) )
         return 0;
 
     mundo_t *mundo;
@@ -35,7 +35,7 @@ int main ()
     fprio_insere(lef,ev,EV_FIM,T_FIM_MUNDO);
 
     int tipo,tempo;
-    while (ev->tempo <= T_FIM_MUNDO && tipo != EV_FIM)
+    do
     {
         ev = fprio_retira(lef,&tipo,&tempo);
         if (ev == NULL)
@@ -96,7 +96,7 @@ int main ()
             default:
                 break;
         }
-    }
+    } while (tipo != EV_FIM);
     // destruir o mundo
     mundo_destroi(mundo);
     fprio_destroi(lef);

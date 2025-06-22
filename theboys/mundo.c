@@ -158,24 +158,60 @@ void inicia_missoes(struct fprio_t *lef, mundo_t *mundo)
 
 void destroi_base(base_t *base)
 {
-    cjto_destroi(base->base_presentes);
-    fila_destroi(base->espera);
-    cjto_destroi(base->hab_presentes);
+    if (base == NULL)
+        return;
+    
+    if (base->base_presentes)
+        cjto_destroi(base->base_presentes);
+    
+    if (base->espera)
+        fila_destroi(base->espera);
+    
+    if (base->hab_presentes)
+        cjto_destroi(base->hab_presentes);
 }
 
 void mundo_destroi(mundo_t *mundo)
 {
-    for (int i = 0; i < NUM_HEROIS; i++)
+    if (mundo == NULL)
+        return;
+
+    if (mundo->herois) 
     {
-        cjto_destroi(mundo->herois[i].habilidades);
-        //free(&mundo->herois[i]);
-
-        cjto_destroi(mundo->missoes[i].habilidades);
-        //free(&mundo->missoes[i]);
-
-        destroi_base(&mundo->bases[i]);
-        //free(&mundo->bases[i]);
+        for (int i = 0; i < NUM_HEROIS; i++)
+            if (mundo->herois[i].habilidades)
+                cjto_destroi(mundo->herois[i].habilidades);
+        free(mundo->herois);
     }
+
+    if (mundo->missoes) 
+    {
+        for (int i = 0; i < NUM_MISSOES; i++)
+            if (mundo->missoes[i].habilidades)
+                cjto_destroi(mundo->missoes[i].habilidades);
+        free(mundo->missoes);
+    }
+
+    if (mundo->bases) {
+        for (int i = 0; i < NUM_BASES; i++)
+            destroi_base(&mundo->bases[i]);
+        free(mundo->bases);
+    }
+
+    if (mundo->dist_miss_base)
+        free(mundo->dist_miss_base);
+
+    //for (int i = 0; i < NUM_HEROIS; i++)
+    //{
+    //    cjto_destroi(mundo->herois[i].habilidades);
+    //    //free(&mundo->herois[i]);
+//
+    //    cjto_destroi(mundo->missoes[i].habilidades);
+    //    //free(&mundo->missoes[i]);
+//
+    //    destroi_base(&mundo->bases[i]);
+    //    //free(&mundo->bases[i]);
+    //}
 
     free(mundo);
 

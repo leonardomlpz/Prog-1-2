@@ -216,10 +216,6 @@ void morre(int tempo, heroi_t *heroi, base_t *base,mundo_t *mundo ,missao_t *mis
     herois_mortos++;
     cjto_retira(base->base_presentes, heroi->heroi_id);
 
-    printf("DEBUG HAB HEROI:");
-    cjto_imprime(heroi->habilidades);
-    printf("\n");
-
     remove_hab_heroi(heroi,base,mundo);
 
     heroi->vivo = 0;
@@ -294,10 +290,10 @@ void missao(int tempo,mundo_t *mundo, struct missao *missao, struct fprio_t *lef
     base_t *base_capaz;
 
     //heroi apenas para achar o heroi mais experiente da base
-    heroi_t *inutil;
-    if (! (inutil = malloc(sizeof(heroi_t))) )
-        return;
-    inutil->exp = -1;
+    //heroi_t *inutil;
+    //if (! (inutil = malloc(sizeof(heroi_t))) )
+    //    return;
+    //inutil->exp = -1;
 
     missao->tentativas++;
     printf ("%6d: MISSAO %d TENT %d HAB REQ: [",tempo, missao->id,missao->tentativas);
@@ -310,6 +306,7 @@ void missao(int tempo,mundo_t *mundo, struct missao *missao, struct fprio_t *lef
     {
         missao->realizada = 1;
         mundo->num_missoes_cumpridas++;
+        mundo->bases[pode_ser_realizada].qtde_missoes++;
 
         printf("%6d: MISSAO %d BASE %d DIST %d HEROIS [", tempo, missao->id, mundo->bases[pode_ser_realizada].base_id,distancia_missao);
         cjto_imprime(mundo->bases[pode_ser_realizada].base_presentes);
@@ -342,29 +339,35 @@ void missao(int tempo,mundo_t *mundo, struct missao *missao, struct fprio_t *lef
             //base capaz = base mais proxima da missao
             for (int i = 0; i < NUM_BASES; i++)
             {
-                base_capaz = &mundo->bases[mundo->dist_miss_base[0].base_id];
-                if (base_capaz->base_presentes->num)
+                base_capaz = &mundo->bases[mundo->dist_miss_base[i].base_id];
+                if (base_capaz->base_presentes->num > 0)
                     break;
             }
-            
-
-            printf("COMPOSTO V\n");
+            base_capaz->qtde_missoes++;
 
             printf("%6d: MISSAO %d CUMPRIDA BASE %d HABS: [",tempo,missao->id,base_capaz->base_id);
             cjto_imprime(base_capaz->hab_presentes);
             printf("]\n");
 
-            heroi_mais_exp = inutil;
+            heroi_mais_exp = NULL;
             mundo->num_compostoV--;
             missao->realizada = 1;
+
+            //confere se heroi esta na base mais proxima
+            //acha o heroi mais experiente na bmp
             for (int i = 0; i < NUM_HEROIS; i++)
             {
-                //confere se heroi esta na base mais proxima
-                //acha o heroi mais experiente na bmp
-                if (cjto_pertence(base_capaz->base_presentes,mundo->herois[i].heroi_id) == 1)
-                    if (heroi_mais_exp->exp < mundo->herois[i].exp)
+                if (cjto_pertence(base_capaz->base_presentes, mundo->herois[i].heroi_id) == 1)
+                    if(!heroi_mais_exp || mundo->herois[i].exp > heroi_mais_exp->exp)
                         heroi_mais_exp = &mundo->herois[i];
             }
+            //for (int i = 0; i < NUM_HEROIS; i++)
+            //{
+            //    
+            //    if (cjto_pertence(base_capaz->base_presentes,mundo->herois[i].heroi_id) == 1)
+            //        if (heroi_mais_exp->exp < mundo->herois[i].exp)
+            //            heroi_mais_exp = &mundo->herois[i];
+            //}
             temp = itens(base_capaz,heroi_mais_exp,missao,tempo);
             fprio_insere(lef,temp,EV_MORRE,tempo);
 
@@ -387,7 +390,7 @@ void missao(int tempo,mundo_t *mundo, struct missao *missao, struct fprio_t *lef
         }
     }
 
-    free (inutil);
+    //free (inutil);
 
     return;
 }
@@ -422,12 +425,6 @@ void fim(mundo_t *mundo)
     {
         b_temp = &mundo->bases[i];
         printf("BASE %2d LOT %2d FILA MAX %2d MISSOES %d\n",b_temp->base_id,b_temp->lotacao_max,b_temp->espera->num,b_temp->qtde_missoes);
-
-        printf("BASE %2d HABILIDADES: [", b_temp->base_id);
-        cjto_imprime(b_temp->hab_presentes);
-        printf("] QTDE_PRESENTES: [");
-        cjto_imprime(b_temp->base_presentes);
-        printf("]\n");
     }
 
     printf("EVENTOS TRATADOS: %d\n", ev_tratados);

@@ -37,17 +37,9 @@ base_t *cria_bases()
         base[i].coord_x = aleat(0,TAM_MUNDO -1);
         base[i].coord_y = aleat(0,TAM_MUNDO -1);
         base[i].lotacao_max = aleat(3,10);
-        //base[i].base_presentes = cjto_cria(base[i].lotacao_max);
         base[i].base_presentes = cjto_cria(NUM_HEROIS);
-        if (base[i].base_presentes == NULL)
-        {
-            printf("ERRO AO CRIAR CJTO\n");
-            return NULL;
-        }
-
         base[i].espera = fila_cria();
         //numero maximo de habilidades por heroi = 3 * qtde de herois maxima
-        //base[i].hab_presentes = cjto_cria(3*base[i].lotacao_max);
         base[i].hab_presentes = cjto_cria(3*base[i].lotacao_max);
         base[i].distancia_missao = 0;
         base[i].qtde_missoes = 0;
@@ -200,18 +192,6 @@ void mundo_destroi(mundo_t *mundo)
 
     if (mundo->dist_miss_base)
         free(mundo->dist_miss_base);
-
-    //for (int i = 0; i < NUM_HEROIS; i++)
-    //{
-    //    cjto_destroi(mundo->herois[i].habilidades);
-    //    //free(&mundo->herois[i]);
-//
-    //    cjto_destroi(mundo->missoes[i].habilidades);
-    //    //free(&mundo->missoes[i]);
-//
-    //    destroi_base(&mundo->bases[i]);
-    //    //free(&mundo->bases[i]);
-    //}
 
     free(mundo);
 

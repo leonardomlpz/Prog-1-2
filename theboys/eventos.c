@@ -289,12 +289,6 @@ void missao(int tempo,mundo_t *mundo, struct missao *missao, struct fprio_t *lef
     heroi_t *heroi_mais_exp;
     base_t *base_capaz;
 
-    //heroi apenas para achar o heroi mais experiente da base
-    //heroi_t *inutil;
-    //if (! (inutil = malloc(sizeof(heroi_t))) )
-    //    return;
-    //inutil->exp = -1;
-
     missao->tentativas++;
     printf ("%6d: MISSAO %d TENT %d HAB REQ: [",tempo, missao->id,missao->tentativas);
     cjto_imprime(missao->habilidades);
@@ -343,6 +337,11 @@ void missao(int tempo,mundo_t *mundo, struct missao *missao, struct fprio_t *lef
                 if (base_capaz->base_presentes->num > 0)
                     break;
             }
+            if (!base_capaz)
+            {
+                printf("%6d: MISSAO %d FALHOU: nenhuma base com heróis vivos disponível para COMPOSTO V\n", tempo, missao->id);
+                return;
+            }
             base_capaz->qtde_missoes++;
 
             printf("%6d: MISSAO %d CUMPRIDA BASE %d HABS: [",tempo,missao->id,base_capaz->base_id);
@@ -361,13 +360,7 @@ void missao(int tempo,mundo_t *mundo, struct missao *missao, struct fprio_t *lef
                     if(!heroi_mais_exp || mundo->herois[i].exp > heroi_mais_exp->exp)
                         heroi_mais_exp = &mundo->herois[i];
             }
-            //for (int i = 0; i < NUM_HEROIS; i++)
-            //{
-            //    
-            //    if (cjto_pertence(base_capaz->base_presentes,mundo->herois[i].heroi_id) == 1)
-            //        if (heroi_mais_exp->exp < mundo->herois[i].exp)
-            //            heroi_mais_exp = &mundo->herois[i];
-            //}
+            
             if (heroi_mais_exp != NULL)
             {
                 temp = itens(base_capaz,heroi_mais_exp,missao,tempo);
@@ -392,8 +385,6 @@ void missao(int tempo,mundo_t *mundo, struct missao *missao, struct fprio_t *lef
             printf("%6d: MISSAO %d IMPOSSIVEL\n", tempo,missao->id);
         }
     }
-
-    //free (inutil);
 
     return;
 }

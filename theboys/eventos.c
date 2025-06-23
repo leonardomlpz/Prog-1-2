@@ -368,8 +368,11 @@ void missao(int tempo,mundo_t *mundo, struct missao *missao, struct fprio_t *lef
             //        if (heroi_mais_exp->exp < mundo->herois[i].exp)
             //            heroi_mais_exp = &mundo->herois[i];
             //}
-            temp = itens(base_capaz,heroi_mais_exp,missao,tempo);
-            fprio_insere(lef,temp,EV_MORRE,tempo);
+            if (heroi_mais_exp != NULL)
+            {
+                temp = itens(base_capaz,heroi_mais_exp,missao,tempo);
+                fprio_insere(lef,temp,EV_MORRE,tempo);
+            }
 
             for (int i = 0; i < NUM_HEROIS; i++)
                 if (mundo->herois[i].vivo)
